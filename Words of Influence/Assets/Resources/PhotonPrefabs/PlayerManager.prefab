@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_playerUIItemPrefab: {fileID: 8278238727221350147, guid: cc52cf01df7626442af5abd253384a81, type: 3}
+  m_boardPrefab: {fileID: 4278700387943175454, guid: e3fb5b5e02edf244790136895235ff39, type: 3}
 --- !u!114 &3502506847379854077
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94,7 +95,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4089951117907720791}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3502506847379854079}
@@ -125,7 +126,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 70
   orthographic: 0
   orthographic size: 5
   m_Depth: 0

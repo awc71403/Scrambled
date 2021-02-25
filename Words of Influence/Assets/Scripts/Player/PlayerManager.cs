@@ -13,10 +13,15 @@ public class PlayerManager : MonoBehaviour
     private Camera m_camera;
     private PhotonView m_PV;
     private int m_HP;
+    private int m_money;
 
     [SerializeField]
     private PlayerUIItem m_playerUIItemPrefab;
     private PlayerUIItem m_playerUIItem;
+
+    [SerializeField]
+    private Board m_boardPrefab;
+    private Board m_board;
 
     public static PlayerManager m_localPlayer;
 
@@ -32,6 +37,7 @@ public class PlayerManager : MonoBehaviour
         m_HP = m_startingHP;
 
         if (m_PV.IsMine) {
+            Debug.Log("I'm the local player!");
             m_localPlayer = this;
         }
     }
@@ -42,6 +48,7 @@ public class PlayerManager : MonoBehaviour
         }
         GameManager.m_singleton.AddPlayer(this);
         CreatePlayerUI();
+        CreateBoard();
     }
 
     private void CreatePlayerUI() {
@@ -51,6 +58,10 @@ public class PlayerManager : MonoBehaviour
         m_playerUIItem.gameObject.transform.SetParent(PlayerUIList.m_singleton.transform);
         m_playerUIItem.gameObject.transform.localScale = new Vector3(1, 1, 1);
         PlayerUIList.m_singleton.UpdateRanking();
+    }
+
+    private void CreateBoard() {
+        m_board = Instantiate(m_boardPrefab);   
     }
     #endregion
 
@@ -63,11 +74,43 @@ public class PlayerManager : MonoBehaviour
         get { return m_HP; }
     }
 
+    public int GetMoney {
+        get { return m_money; }
+    }
+
     public Camera GetCamera {
         get { return m_camera; }
+    }
+
+    public Board GetBoard {
+        get { return m_board; }
+    }
+    #endregion
+
+    #region Shop
+    public void OnBoughtTile(TileDatabaseSO.TileData tileData) {
+        Tile newTile = Instantiate(tileData.m_tilePrefab);
+        Debug.Log(m_board);
+        Debug.Log(m_board.GetMyHand);
+        m_board.GetMyHand.Add(newTile);
     }
     #endregion
 
     #region UI
+    #endregion
+
+    #region Player
+    public void TakeDamage(int damage) {
+        Debug.Log("TakeDamage called");
+        m_PV.RPC("RPC_TakeDamage", RpcTarget.All, damage);
+    }
+    #endregion
+
+    #region RPC
+    [PunRPC]
+    void RPC_TakeDamage(int damage) {
+        m_HP -= damage;
+        m_playerUIItem.UpdateHP(m_HP);
+    }
     #endregion
 }

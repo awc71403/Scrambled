@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Michsky.UI.ModernUIPack;
+using System;
 
 public class PlayerUIItem : MonoBehaviourPunCallbacks {
 
@@ -25,16 +26,17 @@ public class PlayerUIItem : MonoBehaviourPunCallbacks {
         m_hpBar = GetComponentInChildren<ProgressBar>();
         m_hpBar.maxValue = PlayerManager.m_startingHP;
         m_hp = (int)m_hpBar.maxValue;
+        Debug.Log(m_hp);
     }
     #endregion
 
     #region Update
     private void Update() {
-        if (m_hpBar.currentPercent == m_hp) {
-            if (!m_hpBar.invert) {
-                m_hpBar.invert = true;
+        if (m_hpBar.invert) {
+            if (m_hpBar.currentPercent.AlmostEquals(m_hp, .95f)) {
+                m_hpBar.currentPercent = m_hp;
+                m_hpBar.isOn = false;
             }
-            m_hpBar.isOn = false;
         }
     }
     #endregion
@@ -58,6 +60,9 @@ public class PlayerUIItem : MonoBehaviourPunCallbacks {
     public void UpdateHP(int hp) {
         m_hp = hp;
         m_hpBar.isOn = true;
+        m_hpBar.invert = true;
+        Debug.Log($"Update HP: HP now {m_hp}");
+        PlayerUIList.m_singleton.UpdateRanking();
     }
     #endregion
 
