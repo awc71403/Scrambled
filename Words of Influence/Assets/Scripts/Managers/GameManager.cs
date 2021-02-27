@@ -44,8 +44,6 @@ public class GameManager : MonoBehaviourPunCallbacks {
 
         m_playerList = new List<PlayerManager>();
         m_aliveList = new List<PlayerManager>();
-
-        CreateTiles();
     }
 
     void Start() {
@@ -56,65 +54,6 @@ public class GameManager : MonoBehaviourPunCallbacks {
     #endregion
 
     #region Getter
-    #endregion
-
-    #region Board
-    public void CreateTiles() {
-
-        m_tilesObject = new GameObject();
-        m_tilesObject.name = "Tiles";
-
-        m_mapXSize = m_boardColumns;
-        m_mapYSize = m_boardRows;
-
-        m_tileSize = m_tilePrefab.GetComponent<SpriteRenderer>().sprite.bounds.size.x;
-
-        // Fill mapArray, which should be empty at first.
-        m_tileMapArray = new GameObject[m_mapXSize, m_mapYSize];
-
-        // Calculate the size of the map.
-        float mapWidth = m_mapXSize * m_tileSize;
-        float mapHeight = m_mapYSize * m_tileSize;
-
-        // Finds the top left corner.
-        Vector3 worldStart = new Vector3(-mapWidth / 2.0f + (0.5f * m_tileSize), mapHeight / 2.0f - (0.5f * m_tileSize) + m_tileSize);
-
-        // Nested for loop that creates mapYSize * mapXSize tiles.
-        for (int y = 0; y < m_mapYSize; y++) {
-            for (int x = 0; x < m_mapXSize; x++) {
-                PlaceTile(x, y, worldStart);
-            }
-        }
-
-        //for (int y = 0; y < m_mapYSize; y++) {
-        //    if (player1side) {
-        //        player1side.playerside = 1;
-        //    }
-        //    if (player2side) {
-        //        player2side.playerside = 2;
-        //    }
-        //}
-    }
-
-    // Places a tile at position (x, y).
-    private void PlaceTile(int x, int y, Vector3 worldStart) {
-        GameObject newTile = Instantiate(m_tilePrefab);
-
-        //Put under tile object in Hierarchy
-        newTile.transform.SetParent(m_tilesObject.transform);
-
-        // Calculates where it should go.
-        float newX = worldStart.x + (m_tileSize * x);
-        float newY = worldStart.y - (m_tileSize * y);
-
-        // Puts it there.
-        newTile.transform.position = new Vector3(newX, newY, 0);
-        //newTile.GetComponent<TileBehavior>().xPosition = x;
-        //newTile.GetComponent<TileBehavior>().yPosition = y;
-
-        // Adds it to mapArray so we can keep track of it later.
-        m_tileMapArray[x, y] = newTile;
-    }
     #endregion
 
     #region Players

@@ -1,13 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TileShop : MonoBehaviour
 {
+    #region Variables
     public List<BuyTile> m_allTiles;
 
-    private TileDatabaseSO m_tileDatabase;
+    [SerializeField]
+    private Button m_refreshButton;
+    [SerializeField]
+    private Button m_expButton;
 
+    private TileDatabaseSO m_tileDatabase;
+    #endregion
+
+    #region Initialization
     private void Start() {
         m_tileDatabase = GameManager.m_singleton.m_tileDatabase;
         GenerateTiles();
@@ -18,9 +27,31 @@ public class TileShop : MonoBehaviour
             m_allTiles[i].Setup(m_tileDatabase.allTiles[Random.Range(0, m_tileDatabase.allTiles.Count)], this);
         }
     }
+    #endregion
 
+    #region Update
+    private void Update() {
+        
+    }
+    #endregion
+
+    #region Shop
     public void BuyTile(TileDatabaseSO.TileData cardData) {
         Debug.Log(PlayerManager.m_localPlayer);
         PlayerManager.m_localPlayer.OnBoughtTile(cardData);
     }
+
+    public void CanRefresh() {
+        if (PlayerManager.m_localPlayer.GetMoney < 2) {
+            m_refreshButton.interactable = false;
+        }
+        else {
+            m_refreshButton.interactable = true;
+        }
+    }
+
+    public void Refresh() {
+        GenerateTiles();
+    }
+    #endregion
 }

@@ -46,6 +46,12 @@ public class BuyTile : MonoBehaviour
     }
     #endregion
 
+    #region Update
+    private void Update() {
+        //CanBuy();
+    }
+    #endregion
+
     #region Buy
     public void Buy() {
         m_shopRef.BuyTile(m_myData);

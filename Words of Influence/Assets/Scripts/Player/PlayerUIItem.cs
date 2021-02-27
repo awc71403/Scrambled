@@ -26,7 +26,6 @@ public class PlayerUIItem : MonoBehaviourPunCallbacks {
         m_hpBar = GetComponentInChildren<ProgressBar>();
         m_hpBar.maxValue = PlayerManager.m_startingHP;
         m_hp = (int)m_hpBar.maxValue;
-        Debug.Log(m_hp);
     }
     #endregion
 
@@ -61,7 +60,6 @@ public class PlayerUIItem : MonoBehaviourPunCallbacks {
         m_hp = hp;
         m_hpBar.isOn = true;
         m_hpBar.invert = true;
-        Debug.Log($"Update HP: HP now {m_hp}");
         PlayerUIList.m_singleton.UpdateRanking();
     }
     #endregion

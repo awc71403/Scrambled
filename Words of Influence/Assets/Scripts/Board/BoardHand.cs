@@ -6,31 +6,39 @@ public class BoardHand : MonoBehaviour
 {
     #region Variables
     private bool m_isEnemyHand;
+    private Board m_board;
+    private PlayerManager m_player;
 
     //Temporary. Change the Transform into a class to hold the tile and have a drag/dropper.
-    [SerializeField]
-    private Transform[] m_tileHolders;
-    private bool[] m_occupied;
+    private HandHolder[] m_handHolders;
     #endregion
 
     #region Initialization
     private void Awake() {
-        m_occupied = new bool[m_tileHolders.Length];
+        m_board = GetComponentInParent<Board>();
+        m_handHolders = GetComponentsInChildren<HandHolder>();
+    }
+
+    public void Setup(PlayerManager player) {
+        m_player = player;
     }
     #endregion
 
     #region Getter
-    public Transform[] GetTileHolders {
-        get { return m_tileHolders; }
+    public TileHolder[] GetTileHolders {
+        get { return m_handHolders; }
     }
     #endregion
 
     #region Tiles
     public void Add(Tile tile) {
-        for (int i = 0; i < m_occupied.Length; i++) {
-            if (!m_occupied[i]) {
-                m_occupied[i] = true;
-                Transform setLocation = m_tileHolders[i];
+        m_player.TilesInHand++;
+        for (int i = 0; i < m_handHolders.Length; i++) {
+            HandHolder tileHolder = m_handHolders[i];
+            if (!tileHolder.IsOccupied) {
+                tileHolder.IsOccupied = true;
+                tile.OccupiedHolder = tileHolder;
+                Transform setLocation = tileHolder.transform;
                 tile.gameObject.transform.SetPositionAndRotation(setLocation.transform.position, setLocation.transform.rotation);
                 break;
             }

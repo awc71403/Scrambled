@@ -15,6 +15,8 @@ public class PlayerManager : MonoBehaviour
     private int m_HP;
     private int m_money;
 
+    private int m_tilesInHand;
+
     [SerializeField]
     private PlayerUIItem m_playerUIItemPrefab;
     private PlayerUIItem m_playerUIItem;
@@ -35,6 +37,8 @@ public class PlayerManager : MonoBehaviour
         m_PV = GetComponent<PhotonView>();
 
         m_HP = m_startingHP;
+
+        m_tilesInHand = 0;
 
         if (m_PV.IsMine) {
             Debug.Log("I'm the local player!");
@@ -61,11 +65,12 @@ public class PlayerManager : MonoBehaviour
     }
 
     private void CreateBoard() {
-        m_board = Instantiate(m_boardPrefab);   
+        m_board = Instantiate(m_boardPrefab);
+        m_board.Setup(this);
     }
     #endregion
 
-    #region Getter
+    #region Getter/Setter
     public PhotonView GetPhotonView {
         get { return m_PV; }
     }
@@ -85,14 +90,33 @@ public class PlayerManager : MonoBehaviour
     public Board GetBoard {
         get { return m_board; }
     }
+
+    public int TilesInHand {
+        get { return m_tilesInHand; }
+        set { m_tilesInHand = value; }
+    }
     #endregion
 
     #region Shop
     public void OnBoughtTile(TileDatabaseSO.TileData tileData) {
+        if (m_tilesInHand >= m_board.GetMyHand.GetTileHolders.Length) {
+            return;
+        }
+        m_money -= tileData.m_cost;
         Tile newTile = Instantiate(tileData.m_tilePrefab);
         Debug.Log(m_board);
         Debug.Log(m_board.GetMyHand);
         m_board.GetMyHand.Add(newTile);
+
+        //Update UI
+    }
+
+    public void Income() {
+        int bonus = 0;
+        //Interest
+        bonus += Mathf.Min((m_money / 10), 5);
+        //Win/Loss Streak
+        m_money += 5 + bonus;
     }
     #endregion
 
