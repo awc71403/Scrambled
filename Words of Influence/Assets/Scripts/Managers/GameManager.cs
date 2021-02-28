@@ -21,16 +21,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
     private List<PlayerManager> m_playerList;
     private List<PlayerManager> m_aliveList;
 
-    private GameObject[,] m_tileMapArray;
-    [SerializeField]
-    private GameObject m_tilePrefab;
-    private GameObject m_tilesObject;
-    private int m_mapXSize;
-    private int m_mapYSize;
-    private float m_tileSize;
-
-    public const int m_boardRows = 10;
-    public const int m_boardColumns = 10;
+    private int m_turn;
     #endregion
 
     #region Initialization
@@ -69,6 +60,15 @@ public class GameManager : MonoBehaviourPunCallbacks {
     #endregion
 
     #region Game State
+    private void NextTurn() {
+        m_turn++;
+        Debug.Log(m_aliveList.Count);
+        foreach (PlayerManager player in m_aliveList) {
+            player.Income();
+            //Refresh shop
+        }
+    }
+
     private void CheckLastPlayer() {
         if (m_aliveList.Count == 1) {
             Win(m_aliveList[0]);
@@ -117,6 +117,10 @@ public class GameManager : MonoBehaviourPunCallbacks {
             }
             CheckLastPlayer();
         }
+    }
+
+    public void Test_NextTurn() {
+        NextTurn();
     }
     #endregion
 }

@@ -57,9 +57,10 @@ public class Draggable : MonoBehaviour
         m_isDragging = false;
     }
 
+    //Needs to be multiplayer ready
     private bool TryRelease() {
         RaycastHit2D hit = Physics2D.Raycast(m_cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 100, m_releaseMask);
-        if (hit != null && hit.collider != null) {
+        if (hit.collider != null) {
             TileHolder holder = hit.collider.GetComponent<TileHolder>();
             if (holder != null) {
                 //If the Draggable is a Tile (will need to add Items later on)

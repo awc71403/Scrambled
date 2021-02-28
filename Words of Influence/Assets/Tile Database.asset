@@ -14,7 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allTiles:
   - m_tilePrefab: {fileID: 5378110042184336974, guid: 173dff3ea6b976d4ead6c02aa407ff94, type: 3}
+    m_ID: 0
     m_name: A
-    m_health: 4
-    m_attack: 2
+    m_health: 1
+    m_attack: 1
     m_cost: 1
+  - m_tilePrefab: {fileID: 6453709757269233505, guid: 182edd2e5c8e92348ad51d0429715ee0, type: 3}
+    m_ID: 1
+    m_name: B
+    m_health: 2
+    m_attack: 2
+    m_cost: 2

@@ -8,6 +8,7 @@ public class TileDatabaseSO : ScriptableObject {
     [System.Serializable]
     public struct TileData {
         public Tile m_tilePrefab;
+        public int m_ID;
         public string m_name;
 
         public int m_health;

@@ -1,13 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class TileShop : MonoBehaviour
 {
     #region Variables
+    public static TileShop m_singleton;
+
     public List<BuyTile> m_allTiles;
 
+    [SerializeField]
+    private TextMeshProUGUI m_moneyText;
     [SerializeField]
     private Button m_refreshButton;
     [SerializeField]
@@ -17,6 +22,10 @@ public class TileShop : MonoBehaviour
     #endregion
 
     #region Initialization
+    private void Awake() {
+        m_singleton = this;
+    }
+
     private void Start() {
         m_tileDatabase = GameManager.m_singleton.m_tileDatabase;
         GenerateTiles();
@@ -35,9 +44,14 @@ public class TileShop : MonoBehaviour
     }
     #endregion
 
+    #region Getter
+    public TextMeshProUGUI GetMoneyText {
+        get { return m_moneyText; }
+    }
+    #endregion
+
     #region Shop
     public void BuyTile(TileDatabaseSO.TileData cardData) {
-        Debug.Log(PlayerManager.m_localPlayer);
         PlayerManager.m_localPlayer.OnBoughtTile(cardData);
     }
 

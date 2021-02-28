@@ -22,14 +22,7 @@ public class PlayerUIList : MonoBehaviour
 
     #region UI
     public void UpdateRanking() {
-        Debug.Log("Sorting");
         m_playerUIs = gameObject.GetComponentsInChildren<PlayerUIItem>();
-
-        foreach (PlayerUIItem item in m_playerUIs) {
-            Debug.Log($"Player {item.GetName} has {item.GetHP} HP.");
-        }
-
-        Debug.Log(m_playerUIs.Length);
 
         for (int j = 0; j < m_playerUIs.Length - 1; j++)
             for (int i = 0; i < m_playerUIs.Length - j - 1; i++) {

@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
+    [HideInInspector]
     public SpriteRenderer m_spriteRenderer;
+    [HideInInspector]
     public int m_baseDamage;
+    [HideInInspector]
     public int m_baseHealth;
 
-    public TileHolder m_occupiedHolder;
+    private TileHolder m_occupiedHolder;
 
     #region Getter
     public TileHolder OccupiedHolder {

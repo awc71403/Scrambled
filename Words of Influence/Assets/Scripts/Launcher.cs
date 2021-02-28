@@ -40,6 +40,7 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     private const int FullRoomInt = 2;
     private const string PlayerPrefsNameKey = "PlayerName";
+    public const string PlayerID = "PlayerID";
     #endregion
 
     #region Override
@@ -228,6 +229,18 @@ public class Launcher : MonoBehaviourPunCallbacks
                 return;
             }
         }
+        //int playerID = 0;
+        //foreach (Player player in PhotonNetwork.PlayerList) {
+        //    Debug.Log($"There are {PhotonNetwork.PlayerList.Length} players.");
+        //    Debug.Log($"Assigning PlayerID for {player.NickName}");
+        //    ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable
+        //    {
+        //        { PlayerID, playerID },
+        //    };
+        //    player.SetCustomProperties(playerProps);
+        //    playerID++;
+        //    Debug.Log($"Player {player.NickName} has PlayerID {(int)player.CustomProperties[PlayerID]}");
+        //}
         Debug.Log("Start Game");
         SceneManager.LoadScene(1);
     }

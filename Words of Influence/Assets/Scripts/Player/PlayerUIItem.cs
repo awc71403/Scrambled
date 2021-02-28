@@ -16,6 +16,8 @@ public class PlayerUIItem : MonoBehaviourPunCallbacks {
     [SerializeField]
     private TextMeshProUGUI m_letters;
 
+
+    private PlayerManager m_player;
     private int m_hp;
     private ProgressBar m_hpBar;
 
@@ -52,6 +54,7 @@ public class PlayerUIItem : MonoBehaviourPunCallbacks {
 
     #region UI
     public void SetUp(PlayerManager player) {
+        m_player = player;
         m_name.text = player.GetPhotonView.Owner.NickName;
         m_letters.text = m_name.text.Substring(0, 2);
     }
@@ -61,6 +64,14 @@ public class PlayerUIItem : MonoBehaviourPunCallbacks {
         m_hpBar.isOn = true;
         m_hpBar.invert = true;
         PlayerUIList.m_singleton.UpdateRanking();
+    }
+    #endregion
+
+    #region OnClick
+    public void OnClick() {
+        Vector3 location = m_player.GetBoard.transform.position;
+        location.z = location.z - 10;
+        PlayerManager.m_localPlayer.GetCamera.transform.position = location;
     }
     #endregion
 

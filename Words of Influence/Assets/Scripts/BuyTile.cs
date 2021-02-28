@@ -43,18 +43,24 @@ public class BuyTile : MonoBehaviour
 
         m_myData = myData;
         m_shopRef = shopRef;
+
+        m_buyButtonManager.UpdateUI();
     }
     #endregion
 
     #region Update
     private void Update() {
-        //CanBuy();
+        CanBuy();
     }
     #endregion
 
     #region Buy
     public void Buy() {
+        if (PlayerManager.m_localPlayer.TilesInHand >= PlayerManager.m_localPlayer.GetBoard.GetMyHand.GetTileHolders.Length) {
+            return;
+        }
         m_shopRef.BuyTile(m_myData);
+        gameObject.SetActive(false);
     }
 
     private void CanBuy() {
