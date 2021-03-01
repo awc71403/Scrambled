@@ -101,7 +101,6 @@ MonoBehaviour:
   m_spriteRenderer: {fileID: 7864812180777569531}
   m_baseDamage: 1
   m_baseHealth: 1
-  m_occupiedHolder: {fileID: 0}
 --- !u!114 &-3326476275034984730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,7 +116,6 @@ MonoBehaviour:
   m_releaseMask:
     serializedVersion: 2
     m_Bits: 256
-  m_dragOffset: {x: 0, y: -0.4, z: 0}
   m_isDragging: 0
 --- !u!114 &8068092958299195119
 MonoBehaviour:

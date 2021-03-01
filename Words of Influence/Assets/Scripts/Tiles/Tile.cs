@@ -12,6 +12,8 @@ public class Tile : MonoBehaviour
     public int m_baseHealth;
 
     private TileHolder m_occupiedHolder;
+    private int m_column;
+    private int m_row;
 
     #region Getter
     public TileHolder OccupiedHolder {

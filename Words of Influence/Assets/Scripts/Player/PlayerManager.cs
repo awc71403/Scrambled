@@ -22,6 +22,8 @@ public class PlayerManager : MonoBehaviour
     private int m_tilesInHand;
     private int m_ID;
 
+    private int m_tileIDCreator;
+
     private TextMeshProUGUI m_moneyText;
 
     [SerializeField]
@@ -171,6 +173,11 @@ public class PlayerManager : MonoBehaviour
         m_money += 5 + bonus;
         UpdateMoney();
     }
+
+    public void UsedRefresh() {
+        m_PV.RPC("RPC_Refresh", RpcTarget.All);
+        UpdateMoney();
+    }
     #endregion
 
     #region UI
@@ -186,7 +193,19 @@ public class PlayerManager : MonoBehaviour
     }
     #endregion
 
+    #region Tile
+    public void MoveTile(Tile tile, TileHolder targetHolder) {
+        TileHolder currentHolder = tile.OccupiedHolder;
+        m_PV.RPC("RPC_PlaceTile", RpcTarget.All, currentHolder.X, currentHolder.Y, targetHolder.X, targetHolder.Y);
+    }
+    #endregion
+
     #region RPC
+    [PunRPC]
+    void RPC_Refresh() {
+        m_money -= 2;
+    }
+
     [PunRPC]
     void RPC_TakeDamage(int damage) {
         m_HP -= damage;
@@ -199,6 +218,36 @@ public class PlayerManager : MonoBehaviour
         m_money -= tileData.m_cost;
         Tile newTile = Instantiate(tileData.m_tilePrefab);
         m_board.GetMyHand.Add(newTile);
+    }
+
+    [PunRPC]
+    void RPC_PlaceTile(int tileX, int tileY, int targetX, int targetY) {
+        Tile chosenTile;
+        if (tileY != Board.HandYPosition) {
+            chosenTile = m_board.GetHolderMapArray[tileX, tileY].Tile;
+        }
+        else {
+            Debug.Log("In Hand");
+            chosenTile = m_board.GetMyHand.GetTileHolders[tileX].Tile;
+            m_board.GetMyHand.GetTileHolders[tileX].IsOccupied = false;
+            m_tilesInHand--;
+        }
+
+        TileHolder targetHolder;
+        if (targetY != Board.HandYPosition) {
+            targetHolder = m_board.GetHolderMapArray[targetX, targetY];
+        }
+        else {
+            targetHolder = m_board.GetMyHand.GetTileHolders[targetX];
+        }
+
+
+        Debug.Log(chosenTile);
+        targetHolder.Tile = chosenTile;
+        chosenTile.OccupiedHolder.Tile = null;
+        chosenTile.OccupiedHolder.IsOccupied = false;
+        chosenTile.OccupiedHolder = targetHolder;
+        chosenTile.transform.position = targetHolder.transform.position;
     }
     #endregion
 }

@@ -8,7 +8,7 @@ public class Board : MonoBehaviour
     [SerializeField]
     private BoardHolder[] m_boardHolders;
 
-    private BoardHolder[,] m_tileMapArray;
+    private BoardHolder[,] m_holderMapArray;
 
     private PlayerManager m_player;
 
@@ -16,8 +16,9 @@ public class Board : MonoBehaviour
     private BoardHand m_myHand;
     private BoardHand m_opponentHand;
 
-    public const int m_boardRows = 10;
-    public const int m_boardColumns = 10;
+    public const int BoardRows = 10;
+    public const int BoardColumns = 10;
+    public const int HandYPosition = -1;
     #endregion
 
     #region Initialization
@@ -26,11 +27,13 @@ public class Board : MonoBehaviour
     private void Start() {
         m_boardHolders = GetComponentsInChildren<BoardHolder>();
         Debug.Log(m_boardHolders.Length);
-        m_tileMapArray = new BoardHolder[m_boardRows, m_boardColumns];
+        m_holderMapArray = new BoardHolder[BoardRows, BoardColumns];
 
-        for (int y = 0; y < m_boardColumns; y++) {
-            for (int x = 0; x < m_boardRows; x++) {
-                m_tileMapArray[x, y] = m_boardHolders[x + y * m_boardColumns];
+        for (int y = 0; y < BoardColumns; y++) {
+            for (int x = 0; x < BoardRows; x++) {
+                m_holderMapArray[x, y] = m_boardHolders[x + y * BoardColumns];
+                m_boardHolders[x + y * BoardColumns].X = x;
+                m_boardHolders[x + y * BoardColumns].Y = y;
             }
         }
     }
@@ -42,6 +45,10 @@ public class Board : MonoBehaviour
     #endregion
 
     #region Getter
+    public BoardHolder[,] GetHolderMapArray {
+        get { return m_holderMapArray; }
+    }
+
     public BoardHand GetMyHand {
         get { return m_myHand; }
     }

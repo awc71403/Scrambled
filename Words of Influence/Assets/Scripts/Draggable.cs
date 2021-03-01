@@ -18,7 +18,7 @@ public class Draggable : MonoBehaviour
 
     #region Initialization
     private void Start() {
-        m_cam = Camera.main;
+        m_cam = PlayerManager.m_localPlayer.GetCamera;
         m_spriteRenderer = GetComponent<SpriteRenderer>();
     }
     #endregion
@@ -26,6 +26,7 @@ public class Draggable : MonoBehaviour
 
     #region Dragging
     public void OnStartDrag() {
+        Debug.LogError("Start Drag");
         m_oldPosition = this.transform.position;
         m_oldSortingOrder = m_spriteRenderer.sortingOrder;
 
@@ -34,12 +35,13 @@ public class Draggable : MonoBehaviour
     }
 
     public void OnDragging() {
+        Debug.LogError("Dragging");
         if (!m_isDragging) {
             return;
         }
 
         Vector3 newPosition = m_cam.ScreenToWorldPoint(Input.mousePosition);
-        newPosition.z = 0;
+        newPosition.z = newPosition.z + 20;
         this.transform.position = newPosition;
     }
 
@@ -67,10 +69,11 @@ public class Draggable : MonoBehaviour
                 Tile thisTile = GetComponent<Tile>();
                 if (thisTile != null) {
                     if (!holder.IsOccupied) {
+                        PlayerManager.m_localPlayer.MoveTile(thisTile, holder);
                         thisTile.OccupiedHolder.IsOccupied = false;
-                        thisTile.OccupiedHolder = holder;
+                        //thisTile.OccupiedHolder = holder;
                         holder.IsOccupied = true;
-                        thisTile.transform.position = holder.transform.position;
+                        //thisTile.transform.position = holder.transform.position;
                         return true;
                     }
                 }

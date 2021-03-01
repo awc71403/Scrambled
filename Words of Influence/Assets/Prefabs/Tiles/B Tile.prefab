@@ -101,7 +101,6 @@ MonoBehaviour:
   m_spriteRenderer: {fileID: 6453709757269233424}
   m_baseDamage: 2
   m_baseHealth: 4
-  m_occupiedHolder: {fileID: 0}
 --- !u!114 &6453709757269233432
 MonoBehaviour:
   m_ObjectHideFlags: 0

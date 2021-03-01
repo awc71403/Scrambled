@@ -66,6 +66,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
         foreach (PlayerManager player in m_aliveList) {
             player.Income();
             //Refresh shop
+            TileShop.m_singleton.TurnRefresh();
         }
     }
 
