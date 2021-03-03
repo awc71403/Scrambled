@@ -9,6 +9,11 @@ public class TileHolder : MonoBehaviour
     private bool m_isOccupied;
     private int m_x;
     private int m_y;
+    
+    private TileHolder m_leftHolder;
+    private TileHolder m_rightHolder;
+    private TileHolder m_upHolder;
+    private TileHolder m_downHolder;
     #endregion
 
     #region Getter/Setter
@@ -30,6 +35,26 @@ public class TileHolder : MonoBehaviour
     public int Y {
         get { return m_y; }
         set { m_y = value; }
+    }
+
+    public TileHolder Left {
+        get { return m_leftHolder; }
+        set { m_leftHolder = value; }
+    }
+
+    public TileHolder Right {
+        get { return m_rightHolder; }
+        set { m_rightHolder = value; }
+    }
+
+    public TileHolder Up {
+        get { return m_upHolder; }
+        set { m_upHolder = value; }
+    }
+
+    public TileHolder Down {
+        get { return m_downHolder; }
+        set { m_downHolder = value; }
     }
     #endregion
 

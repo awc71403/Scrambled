@@ -26,7 +26,6 @@ public class Draggable : MonoBehaviour
 
     #region Dragging
     public void OnStartDrag() {
-        Debug.LogError("Start Drag");
         m_oldPosition = this.transform.position;
         m_oldSortingOrder = m_spriteRenderer.sortingOrder;
 
@@ -35,7 +34,6 @@ public class Draggable : MonoBehaviour
     }
 
     public void OnDragging() {
-        Debug.LogError("Dragging");
         if (!m_isDragging) {
             return;
         }

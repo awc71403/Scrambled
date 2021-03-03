@@ -27,6 +27,9 @@ public class PlayerManager : MonoBehaviour
     private TextMeshProUGUI m_moneyText;
 
     [SerializeField]
+    private List<Unit> m_myUnits;
+
+    [SerializeField]
     private PlayerUIItem m_playerUIItemPrefab;
     private PlayerUIItem m_playerUIItem;
 
@@ -51,8 +54,9 @@ public class PlayerManager : MonoBehaviour
 
         m_tilesInHand = 0;
 
+        m_myUnits = new List<Unit>();
+
         if (m_PV.IsMine) {
-            Debug.Log("I'm the local player!");
             m_localPlayer = this;
         }
     }
@@ -72,7 +76,6 @@ public class PlayerManager : MonoBehaviour
     }
 
     private void CreatePlayerUI() {
-        Debug.Log($"CreatePlayerUI called. Player {m_PV.Owner.NickName} has {m_HP} HP.");
         m_playerUIItem = Instantiate(m_playerUIItemPrefab);
         m_playerUIItem.SetUp(this);
         m_playerUIItem.gameObject.transform.SetParent(PlayerUIList.m_singleton.transform);
@@ -123,6 +126,11 @@ public class PlayerManager : MonoBehaviour
     public int TilesInHand {
         get { return m_tilesInHand; }
         set { m_tilesInHand = value; }
+    }
+
+    public List<Unit> MyUnits {
+        get { return m_myUnits; }
+        set { m_myUnits = value; }
     }
     #endregion
 
@@ -198,6 +206,127 @@ public class PlayerManager : MonoBehaviour
         TileHolder currentHolder = tile.OccupiedHolder;
         m_PV.RPC("RPC_PlaceTile", RpcTarget.All, currentHolder.X, currentHolder.Y, targetHolder.X, targetHolder.Y);
     }
+
+    private void UpdateUnits(int fromX, int fromY, int targetX, int targetY) {
+        //From: Words left and right of letter being moved
+        //Horizontal
+
+        //For Testing
+        //m_myUnits = new List<Unit>();
+
+        if (fromY != Board.HandYPosition) {
+            Debug.Log("From Update");
+            TileHolder newStart = m_board.GetHolderMapArray[fromX, fromY];
+            while (newStart.Left != null && newStart.Left.Tile != null) {
+                newStart = newStart.Left;
+            }
+            if (newStart.X != fromX) {
+                ScanHorizontal(newStart);
+            }
+            newStart = m_board.GetHolderMapArray[fromX, fromY];
+            newStart = newStart.Right;
+            if (newStart != null && newStart.Tile != null) {
+                ScanHorizontal(newStart);
+            }
+            //Vertical
+            newStart = m_board.GetHolderMapArray[fromX, fromY];
+            while (newStart.Up != null && newStart.Up.Tile != null) {
+                newStart = newStart.Up;
+            }
+            if (newStart.Y != fromY) {
+                ScanVertical(newStart);
+            }
+            newStart = m_board.GetHolderMapArray[fromX, fromY];
+            newStart = newStart.Down;
+            if (newStart != null && newStart.Tile != null) {
+                ScanVertical(newStart);
+            }
+        }
+
+        //Target: Words all combined in row and column
+        //Horizontal
+        if (targetY != Board.HandYPosition) {
+            Debug.Log("Target Update");
+            TileHolder newStart = m_board.GetHolderMapArray[targetX, targetY];
+            while (newStart.Left != null && newStart.Left.Tile != null) {
+                newStart = newStart.Left;
+            }
+
+            ScanHorizontal(newStart);
+
+            //Vertical
+            newStart = m_board.GetHolderMapArray[targetX, targetY];
+            while (newStart.Up != null && newStart.Up.Tile != null) {
+                newStart = newStart.Up;
+            }
+
+            ScanVertical(newStart);
+        }
+
+        Debug.Log($"MyUnits has a length of {m_myUnits.Count}.");
+        Debug.Log($"Here are my units in order:");
+        foreach (Unit unit in m_myUnits) {
+            Debug.Log(TileToString(unit.GetLetters));
+        }
+        Debug.Log("-------------------------------------");
+
+    }
+
+    private void ScanHorizontal(TileHolder leftMost) {
+        List<Tile> listTiles = new List<Tile>();
+        while (leftMost != null && leftMost.Tile != null) {
+            listTiles.Add(leftMost.Tile);
+            leftMost.Tile.RemoveTileUnit(true);
+            leftMost = leftMost.Right;
+        }
+        Tile[] arrayTiles = listTiles.ToArray();
+        if (WordManager.IsWord(TileToString(arrayTiles))) {
+            Unit newWord = new Unit();
+            newWord.Setup(arrayTiles, true);
+            m_myUnits.Add(newWord);
+        }
+        else {
+            foreach (Tile tile in arrayTiles) {
+                Tile[] array = new Tile[1];
+                array[0] = tile;
+                Unit newWord = new Unit();
+                newWord.Setup(array, true);
+                m_myUnits.Add(newWord);
+            }
+        }
+    }
+
+    private void ScanVertical(TileHolder upMost) {
+        List<Tile> listTiles = new List<Tile>();
+        while (upMost != null && upMost.Tile != null) {
+            listTiles.Add(upMost.Tile);
+            upMost.Tile.RemoveTileUnit(false);
+            upMost = upMost.Down;
+        }
+        Tile[] arrayTiles = listTiles.ToArray();
+        if (WordManager.IsWord(TileToString(arrayTiles))) {
+            Unit newWord = new Unit();
+            newWord.Setup(arrayTiles, true);
+            m_myUnits.Add(newWord);
+        }
+        else {
+            foreach (Tile tile in arrayTiles) {
+                Tile[] array = new Tile[1];
+                array[0] = tile;
+                Unit newWord = new Unit();
+                newWord.Setup(array, true);
+                m_myUnits.Add(newWord);
+            }
+        }
+    }
+
+    private string TileToString(Tile[] tiles) {
+        string word = "";
+        for (int i = 0; i < tiles.Length; i++) {
+            word = word + tiles[i].GetName;
+        }
+        return word;
+    }
     #endregion
 
     #region RPC
@@ -217,6 +346,7 @@ public class PlayerManager : MonoBehaviour
         TileDatabaseSO.TileData tileData = GameManager.m_singleton.m_tileDatabase.allTiles[ID];
         m_money -= tileData.m_cost;
         Tile newTile = Instantiate(tileData.m_tilePrefab);
+        newTile.Setup(tileData, this);
         m_board.GetMyHand.Add(newTile);
     }
 
@@ -227,7 +357,6 @@ public class PlayerManager : MonoBehaviour
             chosenTile = m_board.GetHolderMapArray[tileX, tileY].Tile;
         }
         else {
-            Debug.Log("In Hand");
             chosenTile = m_board.GetMyHand.GetTileHolders[tileX].Tile;
             m_board.GetMyHand.GetTileHolders[tileX].IsOccupied = false;
             m_tilesInHand--;
@@ -242,12 +371,13 @@ public class PlayerManager : MonoBehaviour
         }
 
 
-        Debug.Log(chosenTile);
         targetHolder.Tile = chosenTile;
         chosenTile.OccupiedHolder.Tile = null;
         chosenTile.OccupiedHolder.IsOccupied = false;
         chosenTile.OccupiedHolder = targetHolder;
         chosenTile.transform.position = targetHolder.transform.position;
+
+        UpdateUnits(tileX, tileY, targetX, targetY);
     }
     #endregion
 }

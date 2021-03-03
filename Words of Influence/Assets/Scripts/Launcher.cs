@@ -241,7 +241,6 @@ public class Launcher : MonoBehaviourPunCallbacks
         //    playerID++;
         //    Debug.Log($"Player {player.NickName} has PlayerID {(int)player.CustomProperties[PlayerID]}");
         //}
-        Debug.Log("Start Game");
         SceneManager.LoadScene(1);
     }
     #endregion

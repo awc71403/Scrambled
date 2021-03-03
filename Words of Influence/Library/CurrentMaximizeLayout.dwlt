@@ -23,10 +23,10 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 947
-  m_MinSize: {x: 909, y: 442}
-  m_MaxSize: {x: 22004, y: 10021}
+  m_MinSize: {x: 908, y: 442}
+  m_MaxSize: {x: 22003, y: 10021}
   vertical: 0
-  controlID: 8275
+  controlID: 27649
 --- !u!114 &2
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -140,7 +140,7 @@ MonoBehaviour:
   m_MinSize: {x: 201, y: 442}
   m_MaxSize: {x: 4001, y: 8042}
   vertical: 1
-  controlID: 8184
+  controlID: 27628
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -160,8 +160,8 @@ MonoBehaviour:
     y: 0
     width: 891
     height: 456
-  m_MinSize: {x: 201, y: 221}
-  m_MaxSize: {x: 4001, y: 4021}
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 5}
   m_Panes:
   - {fileID: 5}
@@ -204,9 +204,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 28.19929, y: -2.2086284, z: -1145.4077}
+    m_Target: {x: -0.90340614, y: 1.3359516, z: -1192.2806}
     speed: 2
-    m_Value: {x: 28.19929, y: -2.2086284, z: -1145.4077}
+    m_Value: {x: -0.90340614, y: 1.3359516, z: -1192.2806}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -257,9 +257,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 11.744675
+    m_Target: 4.9642134
     speed: 2
-    m_Value: 11.744675
+    m_Value: 4.9642134
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -364,8 +364,8 @@ MonoBehaviour:
     y: 456
     width: 891
     height: 491
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 201, y: 221}
+  m_MaxSize: {x: 4001, y: 4021}
   m_ActualView: {fileID: 2}
   m_Panes:
   - {fileID: 2}
@@ -399,7 +399,7 @@ MonoBehaviour:
   m_ViewDataDictionary: {fileID: 0}
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: 28778
+  m_LastSelectedObjectID: -105686
 --- !u!114 &9
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -456,7 +456,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: e470fdfffe70fdfffc78fdff0879fdff349efdff369ffdff509ffdff60a7fdff80a7fdff6abdfdff6cbefdff86befdff82c6fdff8ec6fdffc8d8fdffe0ebfdfffaebfdfff6f3fdff02f4fdffee06feff0807feff040ffeff100ffeff1e21feff5234feff6c34feff683cfeff743cfeff6094feff7a94feff869cfeffa29cfeff7a64ffff16a7ffff62b4ffffbcbbffffc2bbffff42c2ffff28c3ffff46caffff52d6ffffacf1ffffc6f1ffffc8f9ffffd8f9ffff48fbffff00650000047d0000747d0000763d0100e63d0100
+      m_ExpandedIDs: 8e49feff9449feff1a50feffba74feff6602ffff8802ffffd438ffff54fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -499,8 +499,8 @@ MonoBehaviour:
     y: 0
     width: 356
     height: 947
-  m_MinSize: {x: 232, y: 271}
-  m_MaxSize: {x: 10002, y: 10021}
+  m_MinSize: {x: 230, y: 250}
+  m_MaxSize: {x: 10000, y: 10000}
   m_ActualView: {fileID: 12}
   m_Panes:
   - {fileID: 12}
@@ -544,21 +544,21 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Prefabs/Tiles
+    - Assets/Prefabs
     m_Globs: []
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Prefabs/Tiles
+  - Assets/Prefabs
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\alexc\Unity Projects\Words-of-Influence\Words of Influence
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 10460000
-    m_LastClickedID: 17936
-    m_ExpandedIDs: 00000000c4410000c6410000c8410000ca410000cc410000ce410000da41000000ca9a3b
+    m_SelectedIDs: da410000
+    m_LastClickedID: 16858
+    m_ExpandedIDs: 00000000c4410000c6410000c8410000ca410000cc410000ce41000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -611,8 +611,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 
-    m_LastClickedInstanceID: 0
+    m_SelectedInstanceIDs: a448feff
+    m_LastClickedInstanceID: -112476
     m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: d23e0000c03e000000000000de460000604c0000
     m_RenameOverlay:

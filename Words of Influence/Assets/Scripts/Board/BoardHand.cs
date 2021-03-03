@@ -40,7 +40,6 @@ public class BoardHand : MonoBehaviour
         for (int i = 0; i < m_handHolders.Length; i++) {
             HandHolder tileHolder = m_handHolders[i];
             if (!tileHolder.IsOccupied) {
-                Debug.Log($"Place tile on hand {i} location.");
                 tileHolder.IsOccupied = true;
                 tileHolder.Tile = tile;
                 tile.OccupiedHolder = tileHolder;

@@ -26,7 +26,6 @@ public class Board : MonoBehaviour
     //Should be Awake but keep as Start for now until the Tile generation has been moved (Just to prevent errors)
     private void Start() {
         m_boardHolders = GetComponentsInChildren<BoardHolder>();
-        Debug.Log(m_boardHolders.Length);
         m_holderMapArray = new BoardHolder[BoardRows, BoardColumns];
 
         for (int y = 0; y < BoardColumns; y++) {
@@ -34,6 +33,23 @@ public class Board : MonoBehaviour
                 m_holderMapArray[x, y] = m_boardHolders[x + y * BoardColumns];
                 m_boardHolders[x + y * BoardColumns].X = x;
                 m_boardHolders[x + y * BoardColumns].Y = y;
+            }
+        }
+
+        for (int y = 0; y < BoardColumns; y++) {
+            for (int x = 0; x < BoardRows; x++) {
+                if (x - 1 >= 0) {
+                    m_holderMapArray[x, y].Left = m_holderMapArray[x - 1, y];
+                }
+                if (x + 1 < BoardRows) {
+                    m_holderMapArray[x, y].Right = m_holderMapArray[x + 1, y];
+                }
+                if (y + 1 < BoardColumns) {
+                    m_holderMapArray[x, y].Down = m_holderMapArray[x, y + 1];
+                }
+                if (y - 1 >= 0) {
+                    m_holderMapArray[x, y].Up = m_holderMapArray[x, y - 1];
+                }
             }
         }
     }
