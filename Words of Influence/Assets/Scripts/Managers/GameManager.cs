@@ -21,6 +21,11 @@ public class GameManager : MonoBehaviourPunCallbacks {
     private List<PlayerManager> m_playerList;
     private List<PlayerManager> m_aliveList;
 
+    [SerializeField]
+    private Canvas m_canvas;
+    [SerializeField]
+    private GameObject m_UITrackerPrefab;
+
     private int m_turn;
     #endregion
 
@@ -45,6 +50,9 @@ public class GameManager : MonoBehaviourPunCallbacks {
     #endregion
 
     #region Getter
+    public Canvas GetCanvas {
+        get { return m_canvas; }
+    }
     #endregion
 
     #region Players
@@ -93,6 +101,12 @@ public class GameManager : MonoBehaviourPunCallbacks {
         m_modalWindow.UpdateUI();
         m_modalWindow.OpenWindow();
     }
+
+    public GameObject CreateTracker() {
+        GameObject tracker = Instantiate(m_UITrackerPrefab);
+        tracker.transform.SetParent(m_canvas.transform);
+        return tracker;
+    }
     #endregion
 
     #region Exit
@@ -103,7 +117,6 @@ public class GameManager : MonoBehaviourPunCallbacks {
 
     #region Photon
     public override void OnLeftRoom() {
-        Destroy(RoomManager.m_singleton.gameObject);
         PhotonNetwork.Disconnect();
         SceneManager.LoadScene(0);
         Destroy(gameObject);

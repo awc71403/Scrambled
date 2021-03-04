@@ -25,6 +25,8 @@ public class Tile : MonoBehaviour
 
     private bool m_isSingleTile;
 
+    private GameObject m_UI;
+
     private int m_column;
     private int m_row;
 
@@ -35,10 +37,17 @@ public class Tile : MonoBehaviour
         m_baseHealth = data.m_health;
 
         m_player = owner;
+
+        m_UI = GameManager.m_singleton.CreateTracker();
+        m_UI.GetComponent<UITracker>().TrackObject = gameObject;
     }
     #endregion
 
     #region Getter/Setter
+    public PlayerManager GetPlayer {
+        get { return m_player; }
+    }
+
     public TileHolder OccupiedHolder {
         get { return m_occupiedHolder; }
         set { m_occupiedHolder = value; }
@@ -105,6 +114,7 @@ public class Tile : MonoBehaviour
         if (m_isSingleTile) {
             Debug.Log($"Tile called singleTile remove. There is now {m_player.MyUnits.Count} units left.");
             m_player.MyUnits.Remove(m_horizontalUnit);
+            m_isSingleTile = false;
         }
 
         if (isHorizontal) {

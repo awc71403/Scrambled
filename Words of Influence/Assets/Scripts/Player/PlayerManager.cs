@@ -216,17 +216,32 @@ public class PlayerManager : MonoBehaviour
 
         if (fromY != Board.HandYPosition) {
             Debug.Log("From Update");
+
+            Tile[] fromLeftH = null;
+            bool fromLeftHBool = true;
+
+            Tile[] fromRightH = null;
+            bool fromRightHBool = true;
+
+            Tile[] fromUpV = null;
+            bool fromUpVBool = true;
+
+            Tile[] fromDownV = null;
+            bool fromDownVBool = true;
+
             TileHolder newStart = m_board.GetHolderMapArray[fromX, fromY];
             while (newStart.Left != null && newStart.Left.Tile != null) {
                 newStart = newStart.Left;
             }
             if (newStart.X != fromX) {
-                ScanHorizontal(newStart);
+                fromLeftH = ScanHorizontal(newStart);
+                fromLeftHBool = WordCheck(fromLeftH);
             }
             newStart = m_board.GetHolderMapArray[fromX, fromY];
             newStart = newStart.Right;
             if (newStart != null && newStart.Tile != null) {
-                ScanHorizontal(newStart);
+                fromRightH = ScanHorizontal(newStart);
+                fromRightHBool = WordCheck(fromRightH);
             }
             //Vertical
             newStart = m_board.GetHolderMapArray[fromX, fromY];
@@ -234,12 +249,28 @@ public class PlayerManager : MonoBehaviour
                 newStart = newStart.Up;
             }
             if (newStart.Y != fromY) {
-                ScanVertical(newStart);
+                fromUpV = ScanVertical(newStart);
+                fromUpVBool = WordCheck(fromUpV);
             }
             newStart = m_board.GetHolderMapArray[fromX, fromY];
             newStart = newStart.Down;
             if (newStart != null && newStart.Tile != null) {
-                ScanVertical(newStart);
+                fromDownV = ScanVertical(newStart);
+                fromDownVBool = WordCheck(fromDownV);
+            }
+
+            //Singles
+            if (fromLeftH != null && !fromLeftHBool) {
+                MakeSingleUnits(fromLeftH);
+            }
+            if (fromRightH != null && !fromRightHBool) {
+                MakeSingleUnits(fromRightH);
+            }
+            if (fromUpV != null && !fromUpVBool) {
+                MakeSingleUnits(fromUpV);
+            }
+            if (fromDownV != null && !fromDownVBool) {
+                MakeSingleUnits(fromDownV);
             }
         }
 
@@ -252,7 +283,8 @@ public class PlayerManager : MonoBehaviour
                 newStart = newStart.Left;
             }
 
-            ScanHorizontal(newStart);
+            Tile[] targetH = ScanHorizontal(newStart);
+            bool targetHBool = WordCheck(targetH);
 
             //Vertical
             newStart = m_board.GetHolderMapArray[targetX, targetY];
@@ -260,10 +292,22 @@ public class PlayerManager : MonoBehaviour
                 newStart = newStart.Up;
             }
 
-            ScanVertical(newStart);
+            Tile[] targetV = ScanVertical(newStart);
+            bool targetVBool = WordCheck(targetV);
+
+            //Singles
+            if (!targetHBool) {
+                MakeSingleUnits(targetH);
+            }
+            if (!targetVBool) {
+                MakeSingleUnits(targetV);
+            }
+        }
+        else {
+            m_board.GetMyHand.GetTileHolders[targetX].Tile.RemoveTileUnit(true);
         }
 
-        Debug.Log($"MyUnits has a length of {m_myUnits.Count}.");
+        Debug.Log($"MyUnits has a length of {m_myUnits.Count}."); 
         Debug.Log($"Here are my units in order:");
         foreach (Unit unit in m_myUnits) {
             Debug.Log(TileToString(unit.GetLetters));
@@ -272,51 +316,46 @@ public class PlayerManager : MonoBehaviour
 
     }
 
-    private void ScanHorizontal(TileHolder leftMost) {
+    private Tile[] ScanHorizontal(TileHolder leftMost) {
         List<Tile> listTiles = new List<Tile>();
         while (leftMost != null && leftMost.Tile != null) {
             listTiles.Add(leftMost.Tile);
             leftMost.Tile.RemoveTileUnit(true);
             leftMost = leftMost.Right;
         }
-        Tile[] arrayTiles = listTiles.ToArray();
-        if (WordManager.IsWord(TileToString(arrayTiles))) {
-            Unit newWord = new Unit();
-            newWord.Setup(arrayTiles, true);
-            m_myUnits.Add(newWord);
-        }
-        else {
-            foreach (Tile tile in arrayTiles) {
-                Tile[] array = new Tile[1];
-                array[0] = tile;
-                Unit newWord = new Unit();
-                newWord.Setup(array, true);
-                m_myUnits.Add(newWord);
-            }
-        }
+        return listTiles.ToArray();
     }
 
-    private void ScanVertical(TileHolder upMost) {
+    private Tile[] ScanVertical(TileHolder upMost) {
         List<Tile> listTiles = new List<Tile>();
         while (upMost != null && upMost.Tile != null) {
             listTiles.Add(upMost.Tile);
             upMost.Tile.RemoveTileUnit(false);
             upMost = upMost.Down;
         }
-        Tile[] arrayTiles = listTiles.ToArray();
-        if (WordManager.IsWord(TileToString(arrayTiles))) {
+        return listTiles.ToArray();
+    }
+
+    private bool WordCheck(Tile[] tiles) {
+        if (WordManager.IsWord(TileToString(tiles))) {
             Unit newWord = new Unit();
-            newWord.Setup(arrayTiles, true);
+            newWord.Setup(tiles, true);
             m_myUnits.Add(newWord);
+            return true;
         }
-        else {
-            foreach (Tile tile in arrayTiles) {
-                Tile[] array = new Tile[1];
-                array[0] = tile;
-                Unit newWord = new Unit();
-                newWord.Setup(array, true);
-                m_myUnits.Add(newWord);
+        return false;
+    }
+
+    private void MakeSingleUnits(Tile[] tiles) {
+        foreach (Tile tile in tiles) {
+            if (tile.IsSingleTile || tile.HorizontalUnit != null || tile.VerticalUnit != null) {
+                continue;
             }
+            Tile[] array = new Tile[1];
+            array[0] = tile;
+            Unit newWord = new Unit();
+            newWord.Setup(array, true);
+            m_myUnits.Add(newWord);
         }
     }
 

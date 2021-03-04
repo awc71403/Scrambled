@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class Draggable : MonoBehaviour
+public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     #region Variables
     public LayerMask m_releaseMask;
@@ -25,15 +26,24 @@ public class Draggable : MonoBehaviour
 
 
     #region Dragging
-    public void OnStartDrag() {
+    public void OnBeginDrag(PointerEventData eventData) {
+        if (eventData.button != PointerEventData.InputButton.Left) {
+            return;
+        }
+        Tile thisTile = GetComponent<Tile>();
+        if (thisTile != null) {
+            if (!thisTile.GetPlayer.GetPhotonView.IsMine) {
+                return;
+            }
+        }
         m_oldPosition = this.transform.position;
         m_oldSortingOrder = m_spriteRenderer.sortingOrder;
 
-        m_spriteRenderer.sortingOrder = 1; 
+        m_spriteRenderer.sortingOrder = 1;
         m_isDragging = true;
     }
 
-    public void OnDragging() {
+    public void OnDrag(PointerEventData eventData) {
         if (!m_isDragging) {
             return;
         }
@@ -43,7 +53,8 @@ public class Draggable : MonoBehaviour
         this.transform.position = newPosition;
     }
 
-    public void OnEndDrag() {
+
+    public void OnEndDrag(PointerEventData eventData) {
         if (!m_isDragging) {
             return;
         }
@@ -66,7 +77,7 @@ public class Draggable : MonoBehaviour
                 //If the Draggable is a Tile (will need to add Items later on)
                 Tile thisTile = GetComponent<Tile>();
                 if (thisTile != null) {
-                    if (!holder.IsOccupied) {
+                    if (!holder.IsOccupied && holder.IsMine) {
                         PlayerManager.m_localPlayer.MoveTile(thisTile, holder);
                         thisTile.OccupiedHolder.IsOccupied = false;
                         //thisTile.OccupiedHolder = holder;

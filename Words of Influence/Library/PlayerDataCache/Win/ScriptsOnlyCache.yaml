@@ -27,7 +27,6 @@ ScriptsOnlyBuild:
     - PlayerUIItem
     - PlayerUIList
     - RoomListItem
-    - RoomManager
     - SpawnManager
     - SpawnPoint
     - Tile
@@ -60,8 +59,10 @@ ScriptsOnlyBuild:
     UnityEditor.Graphs.dll:
     - UnityEditor.Graphs.AnimationBlendTree.Graph
     - UnityEditor.Graphs.AnimationBlendTree.GraphGUI
+    - UnityEditor.Graphs.AnimationStateMachine.AnyStateNode
     - UnityEditor.Graphs.AnimationStateMachine.Graph
     - UnityEditor.Graphs.AnimationStateMachine.GraphGUI
+    - UnityEditor.Graphs.AnimationStateMachine.StateNode
     - UnityEditor.Graphs.AnimatorControllerTool
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
@@ -141,33 +142,33 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 13156}
     - Class: 114
-      Script: {instanceID: 13410}
+      Script: {instanceID: 13412}
     - Class: 114
-      Script: {instanceID: 13604}
+      Script: {instanceID: 13606}
     - Class: 114
-      Script: {instanceID: 13718}
+      Script: {instanceID: 13720}
     - Class: 114
-      Script: {instanceID: 14332}
+      Script: {instanceID: 14334}
     - Class: 114
-      Script: {instanceID: 14350}
+      Script: {instanceID: 14352}
     - Class: 114
-      Script: {instanceID: 14402}
+      Script: {instanceID: 14404}
     - Class: 114
-      Script: {instanceID: 14634}
+      Script: {instanceID: 14636}
     - Class: 114
-      Script: {instanceID: 14796}
+      Script: {instanceID: 14798}
     - Class: 114
-      Script: {instanceID: 14912}
+      Script: {instanceID: 14914}
     - Class: 114
-      Script: {instanceID: 14966}
+      Script: {instanceID: 14968}
     - Class: 114
-      Script: {instanceID: 15002}
+      Script: {instanceID: 15004}
     - Class: 114
-      Script: {instanceID: 15078}
+      Script: {instanceID: 15080}
     - Class: 114
-      Script: {instanceID: 15616}
+      Script: {instanceID: 15620}
     - Class: 114
-      Script: {instanceID: 15654}
+      Script: {instanceID: 15658}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -246,45 +247,43 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 13160}
     - Class: 114
-      Script: {instanceID: 13460}
+      Script: {instanceID: 13336}
     - Class: 114
-      Script: {instanceID: 13638}
+      Script: {instanceID: 13640}
     - Class: 114
-      Script: {instanceID: 13898}
+      Script: {instanceID: 13900}
     - Class: 114
-      Script: {instanceID: 14084}
+      Script: {instanceID: 14086}
     - Class: 114
-      Script: {instanceID: 14094}
+      Script: {instanceID: 14096}
     - Class: 114
-      Script: {instanceID: 14402}
+      Script: {instanceID: 14404}
     - Class: 114
-      Script: {instanceID: 14424}
+      Script: {instanceID: 14426}
     - Class: 114
-      Script: {instanceID: 14432}
+      Script: {instanceID: 14434}
     - Class: 114
-      Script: {instanceID: 14634}
+      Script: {instanceID: 14636}
     - Class: 114
-      Script: {instanceID: 14796}
+      Script: {instanceID: 14798}
     - Class: 114
-      Script: {instanceID: 14912}
+      Script: {instanceID: 14914}
     - Class: 114
-      Script: {instanceID: 15082}
+      Script: {instanceID: 15084}
     - Class: 114
-      Script: {instanceID: 15154}
+      Script: {instanceID: 15156}
     - Class: 114
-      Script: {instanceID: 15192}
+      Script: {instanceID: 15194}
     - Class: 114
-      Script: {instanceID: 15260}
+      Script: {instanceID: 15262}
     - Class: 114
-      Script: {instanceID: 15448}
+      Script: {instanceID: 15450}
     - Class: 114
-      Script: {instanceID: 15510}
+      Script: {instanceID: 15512}
     - Class: 114
-      Script: {instanceID: 15590}
+      Script: {instanceID: 15594}
     - Class: 114
-      Script: {instanceID: 15654}
-    - Class: 114
-      Script: {instanceID: 43404}
+      Script: {instanceID: 15658}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -516,7 +515,7 @@ ScriptsOnlyBuild:
     className: PlayerQuitHandler
   - hash:
       serializedVersion: 2
-      Hash: bc557b7bde1579a56da3f01e43b6b3f7
+      Hash: 136de4524f43cd81eb08bfb34df915f3
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: TileShop
@@ -940,6 +939,12 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp.dll
     namespaceName: Michsky.UI.ModernUIPack
     className: CustomDropdownEditor
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: WordManager
   - hash:
       serializedVersion: 2
       Hash: 8824e2ae622413c9997cbbb1a573e80a
@@ -1786,18 +1791,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: PlayableTrack
-  - hash:
-      serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: Unit
-  - hash:
-      serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: WordManager
   platform: 5
   scenePathNames:
   - Assets/Scenes/LauncherScene.unity

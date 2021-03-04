@@ -99,6 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_boardHolders: []
   m_myHand: {fileID: 1724700233980222963}
+  m_opponentHand: {fileID: 327973568371577028}
 --- !u!1 &4278700388235957526
 GameObject:
   m_ObjectHideFlags: 0
@@ -240,7 +241,7 @@ GameObject:
   - component: {fileID: 7771992070177038944}
   - component: {fileID: 327973568371577028}
   m_Layer: 0
-  m_Name: Enemy Hand Holder
+  m_Name: Opponent Hand Holder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

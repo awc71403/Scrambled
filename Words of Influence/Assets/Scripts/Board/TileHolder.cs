@@ -7,6 +7,7 @@ public class TileHolder : MonoBehaviour
     #region Variables
     private Tile m_tile;
     private bool m_isOccupied;
+    private bool m_isMine;
     private int m_x;
     private int m_y;
     
@@ -25,6 +26,11 @@ public class TileHolder : MonoBehaviour
     public bool IsOccupied {
         get { return m_isOccupied; }
         set { m_isOccupied = value; }
+    }
+
+    public bool IsMine {
+        get { return m_isMine; }
+        set { m_isMine = value; }
     }
 
     public int X {

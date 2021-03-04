@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Michsky.UI.ModernUIPack;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -17,6 +18,8 @@ public class TileShop : MonoBehaviour
     private Button m_refreshButton;
     [SerializeField]
     private Button m_expButton;
+    [SerializeField]
+    private SwitchManager m_switch;
 
     private TileDatabaseSO m_tileDatabase;
     #endregion
@@ -66,6 +69,10 @@ public class TileShop : MonoBehaviour
     }
 
     public void TurnRefresh() {
+        if (m_switch.isOn) {
+            m_switch.AnimateSwitch();
+            return;
+        }
         GenerateTiles();
     }
 

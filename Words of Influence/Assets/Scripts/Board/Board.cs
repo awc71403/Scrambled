@@ -14,6 +14,7 @@ public class Board : MonoBehaviour
 
     [SerializeField]
     private BoardHand m_myHand;
+    [SerializeField]
     private BoardHand m_opponentHand;
 
     public const int BoardRows = 10;
@@ -33,7 +34,25 @@ public class Board : MonoBehaviour
                 m_holderMapArray[x, y] = m_boardHolders[x + y * BoardColumns];
                 m_boardHolders[x + y * BoardColumns].X = x;
                 m_boardHolders[x + y * BoardColumns].Y = y;
+                if (y >= BoardColumns / 2) {
+                    if (m_player.GetPhotonView.IsMine) {
+                        m_holderMapArray[x, y].IsMine = true;
+                    }
+                }
+                else {
+                    m_holderMapArray[x, y].GetComponent<SpriteRenderer>().color = new Color(.8f, .8f, .8f);
+                }
             }
+        }
+
+        if (m_player.GetPhotonView.IsMine) {
+            foreach (TileHolder holder in m_myHand.GetTileHolders) {
+                holder.IsMine = true;
+            }
+        }
+
+        foreach (TileHolder holder in m_opponentHand.GetTileHolders) {
+            holder.GetComponent<SpriteRenderer>().color = new Color(.8f, .8f, .8f);
         }
 
         for (int y = 0; y < BoardColumns; y++) {
