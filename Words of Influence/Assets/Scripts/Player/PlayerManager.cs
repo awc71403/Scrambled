@@ -10,6 +10,8 @@ using Photon.Realtime;
 public class PlayerManager : MonoBehaviour
 {
     #region Variables
+    private static int m_repitition;
+
     private RoomManager m_roomManager;
     private Camera m_camera;
     private PhotonView m_PV;
@@ -21,6 +23,11 @@ public class PlayerManager : MonoBehaviour
 
     private int m_tilesInHand;
     private int m_ID;
+
+    private int m_opponentID;
+
+    [SerializeField]
+    private List<int> m_opponentTracker;
 
     private int m_tileIDCreator;
 
@@ -39,22 +46,30 @@ public class PlayerManager : MonoBehaviour
 
     public static PlayerManager m_localPlayer;
 
-    public const int m_startingHP = 100;
-    public const int m_startingMoney = 5;
+    public const int StartingHP = 100;
+    public const int StartingMoney = 5;
+    public const int NoOpponent = -1;
+    public const int GhostID = -1;
+    public const int StartRepetition = 4;
     #endregion
 
     #region Initialization
     void Awake() {
+        m_repitition = StartRepetition;
+
         m_roomManager = RoomManager.m_singleton;
         m_camera = GetComponentInChildren<Camera>();
         m_PV = GetComponent<PhotonView>();
 
-        m_HP = m_startingHP;
-        m_money = m_startingMoney;
+        m_HP = StartingHP;
+        m_money = StartingMoney;
 
         m_tilesInHand = 0;
 
+        m_opponentID = NoOpponent;
+
         m_myUnits = new List<Unit>();
+        m_opponentTracker = new List<int>();
 
         if (m_PV.IsMine) {
             m_localPlayer = this;
@@ -66,15 +81,16 @@ public class PlayerManager : MonoBehaviour
             Destroy(m_camera.gameObject);
         }
 
-        m_moneyText = TileShop.m_singleton.GetMoneyText;
-        UpdateMoney();
+        //m_moneyText = TileShop.m_singleton.GetMoneyText;
+        //UpdateMoney();
 
-        GameManager.m_singleton.AddPlayer(this);
-        CreatePlayerUI();
-        CreateBoard();
-        SetPlayerManagerLocation();
+        //GameManager.m_singleton.AddPlayer(this);
+        //CreatePlayerUI();
+        //CreateBoard();
+        //SetPlayerManagerLocation();
+
     }
-
+        
     private void CreatePlayerUI() {
         m_playerUIItem = Instantiate(m_playerUIItemPrefab);
         m_playerUIItem.SetUp(this);
@@ -84,9 +100,10 @@ public class PlayerManager : MonoBehaviour
     }
 
     private void CreateBoard() {
+        Debug.Log("CreateBoard called");
         Player[] players = PhotonNetwork.PlayerList;
         for (int i = 0; i < players.Length; i++) {
-            if (players[i].UserId == m_PV.Owner.UserId) {
+            if (players[i].UserId == m_PV.Owner.UserId && m_board == null) {
                 m_ID = i;
                 m_board = Instantiate(m_boardPrefab);
                 m_board.Setup(this);
@@ -123,6 +140,16 @@ public class PlayerManager : MonoBehaviour
         get { return m_board; }
     }
 
+    public int ID {
+        get { return m_ID; }
+        set { m_ID = value; }
+    }
+
+    public int OpponentID {
+        get { return m_opponentID; }
+        set { m_opponentID = value; }
+    }
+
     public int TilesInHand {
         get { return m_tilesInHand; }
         set { m_tilesInHand = value; }
@@ -131,6 +158,10 @@ public class PlayerManager : MonoBehaviour
     public List<Unit> MyUnits {
         get { return m_myUnits; }
         set { m_myUnits = value; }
+    }
+
+    public List<int> GetOpponentTracker {
+        get { return m_opponentTracker; }
     }
     #endregion
 
@@ -198,6 +229,23 @@ public class PlayerManager : MonoBehaviour
     public void TakeDamage(int damage) {
         Debug.Log("TakeDamage called");
         m_PV.RPC("RPC_TakeDamage", RpcTarget.All, damage);
+    }
+    #endregion
+
+    #region Battle
+    //Add a way to permenately remove soem stuff
+
+    public void SetOpponent(int opponentID) {
+        m_opponentID = opponentID;
+        m_opponentTracker.Add(opponentID);
+
+        if (m_opponentTracker.Count > m_repitition) {
+            m_opponentTracker.RemoveAt(0);
+        }
+    }
+
+    public void OnPlayerDeath() {
+        m_opponentTracker.RemoveAt(0);
     }
     #endregion
 

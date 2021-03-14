@@ -38,7 +38,7 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     private PlayerListItem[] allPlayers;
 
-    private const int FullRoomInt = 2;
+    private const int FullRoomInt = 8;
     private const string PlayerPrefsNameKey = "PlayerName";
     public const string PlayerID = "PlayerID";
     #endregion

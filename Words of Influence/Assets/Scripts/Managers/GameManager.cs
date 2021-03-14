@@ -26,7 +26,13 @@ public class GameManager : MonoBehaviourPunCallbacks {
     [SerializeField]
     private GameObject m_UITrackerPrefab;
 
+    private int m_currentPlayerAmount;
     private int m_turn;
+
+    private bool m_ghostMatched;
+    private int m_repetition;
+
+    public const int StartRepetition = 4;
     #endregion
 
     #region Initialization
@@ -37,6 +43,9 @@ public class GameManager : MonoBehaviourPunCallbacks {
         }
         DontDestroyOnLoad(gameObject);
         m_singleton = this;
+
+        m_turn = 0;
+        m_repetition = StartRepetition;
 
         m_playerList = new List<PlayerManager>();
         m_aliveList = new List<PlayerManager>();
@@ -53,17 +62,35 @@ public class GameManager : MonoBehaviourPunCallbacks {
     public Canvas GetCanvas {
         get { return m_canvas; }
     }
+
+    public int GetRepetition {
+        get { return m_repetition; }
+    }
     #endregion
 
     #region Players
     public void AddPlayer(PlayerManager player) {
         m_playerList.Add(player);
         m_aliveList.Add(player);
+
+        if (PhotonNetwork.CurrentRoom.PlayerCount == m_playerList.Count) {
+            SortPlayers();
+        }
     }
 
     public void PlayerDied(PlayerManager player) {
         m_aliveList.Remove(player);
         CheckLastPlayer();
+    }
+    #endregion
+
+    #region Sort
+    private void SortPlayers() {
+        m_playerList.Sort(PlayerIDSort);
+    }
+
+    private int PlayerIDSort(PlayerManager player1, PlayerManager player2) {
+        return player1.ID.CompareTo(player2.ID);
     }
     #endregion
 
@@ -115,6 +142,55 @@ public class GameManager : MonoBehaviourPunCallbacks {
     }
     #endregion
 
+    #region Matchmaking
+    private void Matchmake() {
+        foreach (PlayerManager player in m_aliveList) {
+            //While I have no opponnet
+            if (player.OpponentID == PlayerManager.NoOpponent) {
+                //And we're not doing round robin
+                if (m_aliveList.Count > 4) {
+                    int playerIndices;
+                    int random;
+                    //If there are even players or ghost is matched
+                    if (m_aliveList.Count % 2 == 0 || m_ghostMatched) {
+                        //EVEN
+                        playerIndices = m_aliveList.Count;
+                    }
+                    //Else there are odd players and we need to match a ghost
+                    else {
+                        //ODD
+                        playerIndices = m_aliveList.Count + 1;
+                    }
+                    //Find an opponent that you ahven't fought and isn't matched
+                    while (true) {
+                        random = Random.Range(0, playerIndices - 1);
+                        //If you pick the ghost
+                        if (random == playerIndices && !m_ghostMatched) {
+                            //GHOST
+                            player.OpponentID = Random.Range(0, playerIndices - 2);
+                            m_ghostMatched = true;
+                            Debug.Log($"Player {player.ID}'s opponent is the Ghost.");
+                            break;
+                        }
+                        if (m_playerList[m_aliveList[random].ID].OpponentID == PlayerManager.NoOpponent && !player.GetOpponentTracker.Contains(m_aliveList[random].ID)) {
+                            //If the person you chose does not have an opponent and you have not fought him in X turns
+                            player.OpponentID = random;
+                            m_aliveList[random].OpponentID = player.ID;
+                            Debug.Log($"Player {player.ID}'s opponent is Player {player.OpponentID}.");
+                            Debug.Log($"Player {random}'s opponent is Player {m_aliveList[random].OpponentID}.");
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void UpdateMatchmaking() {
+
+    }
+    #endregion
+
     #region Photon
     public override void OnLeftRoom() {
         PhotonNetwork.Disconnect();
@@ -135,6 +211,16 @@ public class GameManager : MonoBehaviourPunCallbacks {
 
     public void Test_NextTurn() {
         NextTurn();
+    }
+
+    public void Test_PlayersAndID() {
+        foreach (PlayerManager player in m_playerList) {
+            Debug.LogError($"Player {player.GetPhotonView.Owner.NickName} has ID {player.ID}");
+        }
+    }
+
+    public void Test_SimulateMatchmaking() {
+        Matchmake();
     }
     #endregion
 }

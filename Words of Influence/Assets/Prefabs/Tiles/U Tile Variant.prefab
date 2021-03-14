@@ -10,10 +10,10 @@ PrefabInstance:
     - target: {fileID: 959452221450409416, guid: cbb3d47087b42604fbdc1b5b6f02ebf5, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 88544cf36b3e58f46b9d9978b9ec0a08, type: 3}
+      objectReference: {fileID: 21300000, guid: 67c6d3df33ff7294caedf552a839ce31, type: 3}
     - target: {fileID: 2661027443325042081, guid: cbb3d47087b42604fbdc1b5b6f02ebf5, type: 3}
       propertyPath: m_Name
-      value: U Tile
+      value: U Tile Variant
       objectReference: {fileID: 0}
     - target: {fileID: 6658022266527650100, guid: cbb3d47087b42604fbdc1b5b6f02ebf5, type: 3}
       propertyPath: m_RootOrder

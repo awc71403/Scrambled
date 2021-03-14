@@ -18,6 +18,7 @@ ScriptsOnlyBuild:
     - Michsky.UI.ModernUIPack.ModalWindowManager
     - Michsky.UI.ModernUIPack.ProgressBar
     - Michsky.UI.ModernUIPack.SwitchManager
+    - Michsky.UI.ModernUIPack.TooltipContent
     - Michsky.UI.ModernUIPack.UIManager
     - Michsky.UI.ModernUIPack.UIManagerButton
     - Michsky.UI.ModernUIPack.UIManagerProgressBar
@@ -32,6 +33,7 @@ ScriptsOnlyBuild:
     - Tile
     - TileDatabaseSO
     - TileShop
+    - UITracker
     - WordManager
     PhotonUnityNetworking.Editor.dll:
     - Photon.Pun.PunSceneSettings
@@ -42,8 +44,6 @@ ScriptsOnlyBuild:
     - UnityEditor.U2D.Animation.BoneGizmo
     Unity.2D.Tilemap.Editor.dll:
     - UnityEditor.Tilemaps.GridPaintingState
-    - UnityEditor.Tilemaps.GridPaletteBrushes
-    - UnityEditor.Tilemaps.GridPalettes
     - UnityEditor.Tilemaps.SceneViewGridManager
     - UnityEditor.Tilemaps.TileDragAndDropManager
     Unity.Rider.Editor.dll:
@@ -59,10 +59,8 @@ ScriptsOnlyBuild:
     UnityEditor.Graphs.dll:
     - UnityEditor.Graphs.AnimationBlendTree.Graph
     - UnityEditor.Graphs.AnimationBlendTree.GraphGUI
-    - UnityEditor.Graphs.AnimationStateMachine.AnyStateNode
     - UnityEditor.Graphs.AnimationStateMachine.Graph
     - UnityEditor.Graphs.AnimationStateMachine.GraphGUI
-    - UnityEditor.Graphs.AnimationStateMachine.StateNode
     - UnityEditor.Graphs.AnimatorControllerTool
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
@@ -148,27 +146,31 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 13720}
     - Class: 114
-      Script: {instanceID: 14334}
+      Script: {instanceID: 13846}
     - Class: 114
-      Script: {instanceID: 14352}
+      Script: {instanceID: 14088}
     - Class: 114
-      Script: {instanceID: 14404}
+      Script: {instanceID: 14336}
     - Class: 114
-      Script: {instanceID: 14636}
+      Script: {instanceID: 14354}
     - Class: 114
-      Script: {instanceID: 14798}
+      Script: {instanceID: 14406}
     - Class: 114
-      Script: {instanceID: 14914}
+      Script: {instanceID: 14638}
     - Class: 114
-      Script: {instanceID: 14968}
+      Script: {instanceID: 14800}
     - Class: 114
-      Script: {instanceID: 15004}
+      Script: {instanceID: 14916}
     - Class: 114
-      Script: {instanceID: 15080}
+      Script: {instanceID: 14970}
     - Class: 114
-      Script: {instanceID: 15620}
+      Script: {instanceID: 15006}
     - Class: 114
-      Script: {instanceID: 15658}
+      Script: {instanceID: 15082}
+    - Class: 114
+      Script: {instanceID: 15622}
+    - Class: 114
+      Script: {instanceID: 15660}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -255,35 +257,35 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 14086}
     - Class: 114
-      Script: {instanceID: 14096}
+      Script: {instanceID: 14098}
     - Class: 114
-      Script: {instanceID: 14404}
+      Script: {instanceID: 14406}
     - Class: 114
-      Script: {instanceID: 14426}
+      Script: {instanceID: 14428}
     - Class: 114
-      Script: {instanceID: 14434}
+      Script: {instanceID: 14436}
     - Class: 114
-      Script: {instanceID: 14636}
+      Script: {instanceID: 14638}
     - Class: 114
-      Script: {instanceID: 14798}
+      Script: {instanceID: 14800}
     - Class: 114
-      Script: {instanceID: 14914}
+      Script: {instanceID: 14916}
     - Class: 114
-      Script: {instanceID: 15084}
+      Script: {instanceID: 15086}
     - Class: 114
-      Script: {instanceID: 15156}
+      Script: {instanceID: 15158}
     - Class: 114
-      Script: {instanceID: 15194}
+      Script: {instanceID: 15196}
     - Class: 114
-      Script: {instanceID: 15262}
+      Script: {instanceID: 15264}
     - Class: 114
-      Script: {instanceID: 15450}
+      Script: {instanceID: 15452}
     - Class: 114
-      Script: {instanceID: 15512}
+      Script: {instanceID: 15514}
     - Class: 114
-      Script: {instanceID: 15594}
+      Script: {instanceID: 15596}
     - Class: 114
-      Script: {instanceID: 15658}
+      Script: {instanceID: 15660}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -449,7 +451,7 @@ ScriptsOnlyBuild:
     className: NotificationManagerEditor
   - hash:
       serializedVersion: 2
-      Hash: dc1b9b50fb00f70382377e24f37f9efc
+      Hash: 921e51a05d0fb72180ba768c64b5578b
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Board
@@ -953,7 +955,7 @@ ScriptsOnlyBuild:
     className: UIGradient
   - hash:
       serializedVersion: 2
-      Hash: beba30a949e8a7bebc0336198c42bca1
+      Hash: b5186f7f43e97f5629a74b54b4ea9c02
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameManager
@@ -1103,7 +1105,7 @@ ScriptsOnlyBuild:
     className: WindowManager
   - hash:
       serializedVersion: 2
-      Hash: cee47710350b74dadea6e993236075b4
+      Hash: b4bb1bfaaea75b6b4cfdce40329faacd
     assemblyName: Assembly-CSharp.dll
     namespaceName: Michsky.UI.ModernUIPack
     className: TooltipContent
@@ -1155,6 +1157,12 @@ ScriptsOnlyBuild:
     assemblyName: PhotonUnityNetworking.dll
     namespaceName: Photon.Pun
     className: ServerSettings
+  - hash:
+      serializedVersion: 2
+      Hash: 2ab905d8f5cec2bee8ffa4056996df84
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: UITracker
   - hash:
       serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
@@ -1795,5 +1803,5 @@ ScriptsOnlyBuild:
   scenePathNames:
   - Assets/Scenes/LauncherScene.unity
   - Assets/Scenes/GameScene.unity
-  playerPath: C:/Users/alexc/Unity Projects/Words-of-Influence/Words of Influence/Build/Words
-    of Influence.exe
+  playerPath: C:/Users/alexc/OneDrive/Documents/GitHub/Words-of-Influence/Words of
+    Influence/Build/Words of Influence.exe
