@@ -24,59 +24,109 @@ public class TestManager : MonoBehaviour
         foreach (PlayerManager player in m_aliveList) {
             player.OpponentID = PlayerManager.NoOpponent;
         }
-        Debug.Log("Matchmaking called");
+        int[] chosenEnemyID = new int[m_playerList.Count];
+        for (int i = 0; i < chosenEnemyID.Length; i++) {
+            chosenEnemyID[i] = PlayerManager.NoOpponent;
+        }
         foreach (PlayerManager player in m_aliveList) {
+            Debug.Log($"Player {player.ID}");
             //While I have no opponnet
-            if (player.OpponentID == PlayerManager.NoOpponent) {
+            if (chosenEnemyID[player.ID] == PlayerManager.NoOpponent) {
                 //And we're not doing round robin
                 if (m_aliveList.Count > 4) {
-                    int playerIndices;
+                    List<PlayerManager> possibleOpponents = new List<PlayerManager>(m_aliveList);
+                    int playerIndices = possibleOpponents.Count;
                     int random;
+                    bool odd;
                     //If there are even players or ghost is matched
                     //if (m_aliveList.Count % 2 == 0 || m_ghostMatched) {
-                        //EVEN
-                        playerIndices = m_aliveList.Count;
+                    //EVEN
+                    odd = false;
                     //}
                     //Else there are odd players and we need to match a ghost
                     //else {
-                        //ODD
-                        //playerIndices = m_aliveList.Count + 1;
+                    //ODD
+                    //Debug.Log("There are odd players");
+                    //odd = true;
                     //}
                     //Find an opponent that you haven't fought and isn't matched
                     //Need to test with int for loop instead of Random.Range
-                    //while (true) {
                     bool found = false;
-                    for (int i = 0; i < playerIndices; i ++) {
-                        //random = Random.Range(0, playerIndices);
-                        random = i;
-                        //If you pick the ghost
-                        //if (!m_ghostMatched && random == playerIndices && !player.GetOpponentTracker.Contains(PlayerManager.GhostID)) {
-                            //GHOST
-                            //int opponentID = Random.Range(0, playerIndices - 1);
-                            //if (player.ID != opponentID) {
-                                //If the ghost is not yourself
-                                //player.SetOpponent(PlayerManager.GhostID);
-                                //m_ghostMatched = true;
-                                //Debug.Log($"Player {player.ID}'s opponent is the Ghost.");
-                                //break;
-                            //}
+                    while (playerIndices != 0) {
+                        //if (!odd) {
+                        random = Random.Range(0, playerIndices);
+                        //} else {
+                        //random = Random.Range(0, playerIndices + 1);
                         //}
-                        if (m_playerList[m_aliveList[random].ID].OpponentID == PlayerManager.NoOpponent && !player.GetOpponentTracker.Contains(m_aliveList[random].ID) && player.ID != random) {
+                        //If you pick the ghost
+                        //if (random == playerIndices && !player.GetOpponentTracker.Contains(PlayerManager.GhostID)) {
+                        //GHOST
+                        //Add another while loop incase you picked yourself
+                        //int opponentID = Random.Range(0, playerIndices - 1);
+                        //if (player.ID == opponentID) {
+                        //If the ghost is not yourself
+                        //possibleOpponents.RemoveAt(opponentID);
+                        //playerIndices--;
+                        //opponentID = Random.Range(0, playerIndices - 1);
+                        //}
+                        //player.SetGhostOpponent(possibleOpponents[opponentID].ID);
+                        //m_ghostMatched = true;
+                        //found = true;
+                        //Debug.Log($"Player {player.ID}'s opponent is the Ghost of Player {possibleOpponents[opponentID].ID}.");
+                        //break;
+                        //}
+                        if (chosenEnemyID[possibleOpponents[random].ID] == PlayerManager.NoOpponent && !player.GetOpponentTracker.Contains(possibleOpponents[random].ID) && player.ID != possibleOpponents[random].ID) {
                             //If the person you chose does not have an opponent and you have not fought him in X turns and if your opponent is not yourself
-                            player.SetOpponent(random);
-                            m_aliveList[random].SetOpponent(player.ID);
-                            Debug.Log($"Player {player.ID}'s opponent is Player {player.OpponentID}.");
-                            Debug.Log($"Player {random}'s opponent is Player {m_aliveList[random].OpponentID}.");
+                            chosenEnemyID[player.ID] = possibleOpponents[random].ID;
+                            chosenEnemyID[possibleOpponents[random].ID] = player.ID;
+                            Debug.Log($"Player {player.ID}'s opponent is Player {chosenEnemyID[player.ID]}.");
+                            Debug.Log($"Player {possibleOpponents[random].ID}'s opponent is Player {chosenEnemyID[possibleOpponents[random].ID]}.");
                             found = true;
                             break;
+                        } else {
+                            possibleOpponents.RemoveAt(random);
+                            playerIndices--;
                         }
                     }
                     if (!found) {
-                        Debug.Log("No matching at all");
+                        PlayerManager fix = player;
+                        possibleOpponents = new List<PlayerManager>(m_aliveList);
+                        playerIndices = possibleOpponents.Count;
+                        Debug.LogError("No matching at all");
+                        odd = false;
+                        while (playerIndices != 0) {
+                            random = Random.Range(0, playerIndices);
+
+                            if (!fix.GetOpponentTracker.Contains(possibleOpponents[random].ID) && fix.ID != possibleOpponents[random].ID) {
+                                chosenEnemyID[fix.ID] = possibleOpponents[random].ID;
+                                int nextFix = chosenEnemyID[possibleOpponents[random].ID];
+                                chosenEnemyID[possibleOpponents[random].ID] = fix.ID;
+
+                                if (nextFix == PlayerManager.NoOpponent) {
+                                    Debug.LogError("We have fixed it!");
+                                    break;
+                                }
+
+                                possibleOpponents = new List<PlayerManager>(m_aliveList);
+                                playerIndices = possibleOpponents.Count;
+                                fix = m_playerList[nextFix];
+                            }
+                            else {
+                                possibleOpponents.RemoveAt(random);
+                                playerIndices--;
+                            }
+                        }
                     }
                 }
             }
         }
+        for (int i = 0; i < chosenEnemyID.Length; i++) {
+            if (chosenEnemyID[i] != PlayerManager.NoOpponent) {
+                m_playerList[i].SetOpponent(chosenEnemyID[i]);
+                Debug.Log($"Player {m_playerList[i].ID}'s TRUE opponent is Player {m_playerList[i].OpponentID}.");
+            }
+        }
+
         Debug.Log("--------------------------------------------------------------------------");
     }
 

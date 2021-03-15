@@ -25,6 +25,7 @@ public class PlayerManager : MonoBehaviour
     private int m_ID;
 
     private int m_opponentID;
+    private int m_ghostID;
 
     [SerializeField]
     private List<int> m_opponentTracker;
@@ -49,7 +50,7 @@ public class PlayerManager : MonoBehaviour
     public const int StartingHP = 100;
     public const int StartingMoney = 5;
     public const int NoOpponent = -1;
-    public const int GhostID = -1;
+    public const int GhostID = -2;
     public const int StartRepetition = 4;
     #endregion
 
@@ -138,6 +139,10 @@ public class PlayerManager : MonoBehaviour
 
     public Board GetBoard {
         get { return m_board; }
+    }
+
+    public int GetGhostID {
+        get { return m_ghostID; }
     }
 
     public int ID {
@@ -235,17 +240,31 @@ public class PlayerManager : MonoBehaviour
     #region Battle
     //Add a way to permenately remove soem stuff
 
+    public void SetGhostOpponent(int opponentID) {
+        m_ghostID = opponentID;
+        m_opponentID = GhostID;
+
+        TrackerUpdate();
+    }
+
     public void SetOpponent(int opponentID) {
         m_opponentID = opponentID;
         m_opponentTracker.Add(opponentID);
 
-        if (m_opponentTracker.Count > m_repitition) {
-            m_opponentTracker.RemoveAt(0);
-        }
+        TrackerUpdate();
     }
 
     public void OnPlayerDeath() {
-        m_opponentTracker.RemoveAt(0);
+        if (m_repitition > 1) {
+            m_repitition--;
+            TrackerUpdate();
+        }
+    }
+
+    private void TrackerUpdate() {
+        if (m_opponentTracker.Count > m_repitition) {
+            m_opponentTracker.RemoveAt(0);
+        }
     }
     #endregion
 

@@ -658,7 +658,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 62331185}
         m_TargetAssemblyTypeName: TestManager, Assembly-CSharp
-        m_MethodName: Matchmake
+        m_MethodName: KillPlayer
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
