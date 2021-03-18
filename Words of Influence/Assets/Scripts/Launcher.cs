@@ -7,6 +7,7 @@ using Photon.Realtime;
 using UnityEngine.UI;
 using System.IO;
 using UnityEngine.SceneManagement;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class Launcher : MonoBehaviourPunCallbacks
 {
@@ -38,22 +39,27 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     private PlayerListItem[] allPlayers;
 
+    private const int MaxRandomMatchmaking = 100000;
     private const int FullRoomInt = 8;
     private const string PlayerPrefsNameKey = "PlayerName";
     public const string PlayerID = "PlayerID";
+    public const string RandomSeedKey = "RandomSeed";
     #endregion
 
     #region Override
     public override void OnConnectedToMaster() {
+        base.OnConnectedToMaster();
         PhotonNetwork.JoinLobby();
         PhotonNetwork.AutomaticallySyncScene = true;
     }
 
     public override void OnJoinedLobby() {
+        base.OnJoinedLobby();
         MenuManager.m_singleton.OpenMenu("title");
     }
 
     public override void OnJoinedRoom() {
+        base.OnJoinedRoom();
         Room currentRoom = PhotonNetwork.CurrentRoom;
         if (currentRoom.PlayerCount >= FullRoomInt) {
             currentRoom.IsOpen = false;
@@ -70,24 +76,29 @@ public class Launcher : MonoBehaviourPunCallbacks
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient) {
+        base.OnMasterClientSwitched(newMasterClient);
         startGameButton.SetActive(PhotonNetwork.IsMasterClient);
         readyToggleButton.SetActive(!PhotonNetwork.IsMasterClient);
     }
 
     public override void OnCreatedRoom() {
+        base.OnCreatedRoom();
         PhotonNetwork.CurrentRoom.MaxPlayers = FullRoomInt;
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message) {
+        base.OnCreateRoomFailed(returnCode, message);
         errorText.text = $"Room Creation Failed: {message}";
         MenuManager.m_singleton.OpenMenu("error");
     }
 
     public override void OnLeftRoom() {
+        base.OnLeftRoom();
         MenuManager.m_singleton.OpenMenu("title");
     }
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList) {
+        base.OnRoomListUpdate(roomList);
         foreach (Transform trans in roomListContent) {
             Destroy(trans.gameObject);
 
@@ -123,6 +134,17 @@ public class Launcher : MonoBehaviourPunCallbacks
             }
         }
 
+    }
+
+    public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged) {
+        base.OnRoomPropertiesUpdate(propertiesThatChanged);
+        if (propertiesThatChanged.ContainsKey(Launcher.RandomSeedKey)) {
+            int randomSeed = (int)propertiesThatChanged[Launcher.RandomSeedKey];
+            RoomManager.Seed = randomSeed;
+            if (PhotonNetwork.IsMasterClient) {
+                SceneManager.LoadScene(1);
+            }
+        }
     }
     #endregion
 
@@ -229,19 +251,14 @@ public class Launcher : MonoBehaviourPunCallbacks
                 return;
             }
         }
-        //int playerID = 0;
-        //foreach (Player player in PhotonNetwork.PlayerList) {
-        //    Debug.Log($"There are {PhotonNetwork.PlayerList.Length} players.");
-        //    Debug.Log($"Assigning PlayerID for {player.NickName}");
-        //    ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable
-        //    {
-        //        { PlayerID, playerID },
-        //    };
-        //    player.SetCustomProperties(playerProps);
-        //    playerID++;
-        //    Debug.Log($"Player {player.NickName} has PlayerID {(int)player.CustomProperties[PlayerID]}");
-        //}
-        SceneManager.LoadScene(1);
+
+        Hashtable hash = new Hashtable();
+        int randomSeed = Random.Range(1, MaxRandomMatchmaking);
+        hash.Add(RandomSeedKey, randomSeed);
+
+        Debug.Log($"Launcher Random Seed: {randomSeed}");
+
+        PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
     }
     #endregion
 

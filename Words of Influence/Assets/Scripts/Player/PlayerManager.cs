@@ -82,13 +82,13 @@ public class PlayerManager : MonoBehaviour
             Destroy(m_camera.gameObject);
         }
 
-        //m_moneyText = TileShop.m_singleton.GetMoneyText;
-        //UpdateMoney();
+        m_moneyText = TileShop.m_singleton.GetMoneyText;
+        UpdateMoney();
 
-        //GameManager.m_singleton.AddPlayer(this);
-        //CreatePlayerUI();
-        //CreateBoard();
-        //SetPlayerManagerLocation();
+        GameManager.m_singleton.AddPlayer(this);
+        CreatePlayerUI();
+        CreateBoard();
+        SetPlayerManagerLocation();
 
     }
         
@@ -254,17 +254,20 @@ public class PlayerManager : MonoBehaviour
         TrackerUpdate();
     }
 
-    public void OnPlayerDeath() {
+    public static void OnPlayerDeath() {
         if (m_repitition > 1) {
             m_repitition--;
-            TrackerUpdate();
         }
     }
 
-    private void TrackerUpdate() {
+    public void TrackerUpdate() {
         if (m_opponentTracker.Count > m_repitition) {
             m_opponentTracker.RemoveAt(0);
         }
+    }
+
+    public void SetTracker(List<int> tracker) {
+        m_opponentTracker = tracker;
     }
     #endregion
 
@@ -274,104 +277,176 @@ public class PlayerManager : MonoBehaviour
         m_PV.RPC("RPC_PlaceTile", RpcTarget.All, currentHolder.X, currentHolder.Y, targetHolder.X, targetHolder.Y);
     }
 
-    private void UpdateUnits(int fromX, int fromY, int targetX, int targetY) {
+    public void SwapTiles(Tile tile, TileHolder targetHolder) {
+        TileHolder currentHolder = tile.OccupiedHolder;
+        m_PV.RPC("RPC_SwapTiles", RpcTarget.All, currentHolder.X, currentHolder.Y, targetHolder.X, targetHolder.Y);
+    }
+
+    private void UpdateUnits(int fromX, int fromY, int targetX, int targetY, bool isSwapping = false) {
         //From: Words left and right of letter being moved
         //Horizontal
 
         //For Testing
         //m_myUnits = new List<Unit>();
 
-        if (fromY != Board.HandYPosition) {
-            Debug.Log("From Update");
+        //If the tile is on the board
+        if (isSwapping) {
+            if (fromY != Board.HandYPosition) {
+                //Horizontal
+                TileHolder newStart = m_board.GetHolderMapArray[fromX, fromY];
+                while (newStart.Left != null && newStart.Left.Tile != null) {
+                    newStart = newStart.Left;
+                }
 
-            Tile[] fromLeftH = null;
-            bool fromLeftHBool = true;
+                Tile[] fromH = ScanHorizontal(newStart);
+                bool fromHBool = WordCheck(fromH);
 
-            Tile[] fromRightH = null;
-            bool fromRightHBool = true;
+                //Vertical
+                newStart = m_board.GetHolderMapArray[fromX, fromY];
+                while (newStart.Up != null && newStart.Up.Tile != null) {
+                    newStart = newStart.Up;
+                }
 
-            Tile[] fromUpV = null;
-            bool fromUpVBool = true;
+                Tile[] fromV = ScanVertical(newStart);
+                bool fromVBool = WordCheck(fromV);
 
-            Tile[] fromDownV = null;
-            bool fromDownVBool = true;
+                //Singles
+                if (!fromHBool) {
+                    MakeSingleUnits(fromH);
+                }
+                if (!fromVBool) {
+                    MakeSingleUnits(fromV);
+                }
+            }
+            else {
+                m_board.GetMyHand.GetTileHolders[fromX].Tile.RemoveTileUnit(true);
+            }
+            if (targetY != Board.HandYPosition) {
+                //Horizontal
+                TileHolder newStart = m_board.GetHolderMapArray[targetX, targetY];
+                while (newStart.Left != null && newStart.Left.Tile != null) {
+                    newStart = newStart.Left;
+                }
 
-            TileHolder newStart = m_board.GetHolderMapArray[fromX, fromY];
-            while (newStart.Left != null && newStart.Left.Tile != null) {
-                newStart = newStart.Left;
-            }
-            if (newStart.X != fromX) {
-                fromLeftH = ScanHorizontal(newStart);
-                fromLeftHBool = WordCheck(fromLeftH);
-            }
-            newStart = m_board.GetHolderMapArray[fromX, fromY];
-            newStart = newStart.Right;
-            if (newStart != null && newStart.Tile != null) {
-                fromRightH = ScanHorizontal(newStart);
-                fromRightHBool = WordCheck(fromRightH);
-            }
-            //Vertical
-            newStart = m_board.GetHolderMapArray[fromX, fromY];
-            while (newStart.Up != null && newStart.Up.Tile != null) {
-                newStart = newStart.Up;
-            }
-            if (newStart.Y != fromY) {
-                fromUpV = ScanVertical(newStart);
-                fromUpVBool = WordCheck(fromUpV);
-            }
-            newStart = m_board.GetHolderMapArray[fromX, fromY];
-            newStart = newStart.Down;
-            if (newStart != null && newStart.Tile != null) {
-                fromDownV = ScanVertical(newStart);
-                fromDownVBool = WordCheck(fromDownV);
-            }
+                Tile[] targetH = ScanHorizontal(newStart);
+                bool targetHBool = WordCheck(targetH);
 
-            //Singles
-            if (fromLeftH != null && !fromLeftHBool) {
-                MakeSingleUnits(fromLeftH);
-            }
-            if (fromRightH != null && !fromRightHBool) {
-                MakeSingleUnits(fromRightH);
-            }
-            if (fromUpV != null && !fromUpVBool) {
-                MakeSingleUnits(fromUpV);
-            }
-            if (fromDownV != null && !fromDownVBool) {
-                MakeSingleUnits(fromDownV);
-            }
-        }
+                //Vertical
+                newStart = m_board.GetHolderMapArray[targetX, targetY];
+                while (newStart.Up != null && newStart.Up.Tile != null) {
+                    newStart = newStart.Up;
+                }
 
-        //Target: Words all combined in row and column
-        //Horizontal
-        if (targetY != Board.HandYPosition) {
-            Debug.Log("Target Update");
-            TileHolder newStart = m_board.GetHolderMapArray[targetX, targetY];
-            while (newStart.Left != null && newStart.Left.Tile != null) {
-                newStart = newStart.Left;
+                Tile[] targetV = ScanVertical(newStart);
+                bool targetVBool = WordCheck(targetV);
+
+                //Singles
+                if (!targetHBool) {
+                    MakeSingleUnits(targetH);
+                }
+                if (!targetVBool) {
+                    MakeSingleUnits(targetV);
+                }
             }
-
-            Tile[] targetH = ScanHorizontal(newStart);
-            bool targetHBool = WordCheck(targetH);
-
-            //Vertical
-            newStart = m_board.GetHolderMapArray[targetX, targetY];
-            while (newStart.Up != null && newStart.Up.Tile != null) {
-                newStart = newStart.Up;
-            }
-
-            Tile[] targetV = ScanVertical(newStart);
-            bool targetVBool = WordCheck(targetV);
-
-            //Singles
-            if (!targetHBool) {
-                MakeSingleUnits(targetH);
-            }
-            if (!targetVBool) {
-                MakeSingleUnits(targetV);
+            else {
+                m_board.GetMyHand.GetTileHolders[targetX].Tile.RemoveTileUnit(true);
             }
         }
         else {
-            m_board.GetMyHand.GetTileHolders[targetX].Tile.RemoveTileUnit(true);
+            if (fromY != Board.HandYPosition) {
+                //Will need to be updated for SWAP
+                Debug.Log("From Update");
+
+                Tile[] fromLeftH = null;
+                bool fromLeftHBool = true;
+
+                Tile[] fromRightH = null;
+                bool fromRightHBool = true;
+
+                Tile[] fromUpV = null;
+                bool fromUpVBool = true;
+
+                Tile[] fromDownV = null;
+                bool fromDownVBool = true;
+
+                TileHolder newStart = m_board.GetHolderMapArray[fromX, fromY];
+                while (newStart.Left != null && newStart.Left.Tile != null) {
+                    newStart = newStart.Left;
+                }
+                if (newStart.X != fromX) {
+                    fromLeftH = ScanHorizontal(newStart);
+                    fromLeftHBool = WordCheck(fromLeftH);
+                }
+                newStart = m_board.GetHolderMapArray[fromX, fromY];
+                newStart = newStart.Right;
+                if (newStart != null && newStart.Tile != null) {
+                    fromRightH = ScanHorizontal(newStart);
+                    fromRightHBool = WordCheck(fromRightH);
+                }
+                //Vertical
+                newStart = m_board.GetHolderMapArray[fromX, fromY];
+                while (newStart.Up != null && newStart.Up.Tile != null) {
+                    newStart = newStart.Up;
+                }
+                if (newStart.Y != fromY) {
+                    fromUpV = ScanVertical(newStart);
+                    fromUpVBool = WordCheck(fromUpV);
+                }
+                newStart = m_board.GetHolderMapArray[fromX, fromY];
+                newStart = newStart.Down;
+                if (newStart != null && newStart.Tile != null) {
+                    fromDownV = ScanVertical(newStart);
+                    fromDownVBool = WordCheck(fromDownV);
+                }
+
+                //Singles
+                if (fromLeftH != null && !fromLeftHBool) {
+                    MakeSingleUnits(fromLeftH);
+                }
+                if (fromRightH != null && !fromRightHBool) {
+                    MakeSingleUnits(fromRightH);
+                }
+                if (fromUpV != null && !fromUpVBool) {
+                    MakeSingleUnits(fromUpV);
+                }
+                if (fromDownV != null && !fromDownVBool) {
+                    MakeSingleUnits(fromDownV);
+                }
+            }
+
+            //Target: Words all combined in row and column
+            //If the place you're putting the tile isn't your hand
+            if (targetY != Board.HandYPosition) {
+                Debug.Log("Target Update");
+                //Horizontal
+                TileHolder newStart = m_board.GetHolderMapArray[targetX, targetY];
+                while (newStart.Left != null && newStart.Left.Tile != null) {
+                    newStart = newStart.Left;
+                }
+
+                Tile[] targetH = ScanHorizontal(newStart);
+                bool targetHBool = WordCheck(targetH);
+
+                //Vertical
+                newStart = m_board.GetHolderMapArray[targetX, targetY];
+                while (newStart.Up != null && newStart.Up.Tile != null) {
+                    newStart = newStart.Up;
+                }
+
+                Tile[] targetV = ScanVertical(newStart);
+                bool targetVBool = WordCheck(targetV);
+
+                //Singles
+                if (!targetHBool) {
+                    MakeSingleUnits(targetH);
+                }
+                if (!targetVBool) {
+                    MakeSingleUnits(targetV);
+                }
+            }
+            else {
+                m_board.GetMyHand.GetTileHolders[targetX].Tile.RemoveTileUnit(true);
+            }
         }
 
         Debug.Log($"MyUnits has a length of {m_myUnits.Count}."); 
@@ -383,6 +458,7 @@ public class PlayerManager : MonoBehaviour
 
     }
 
+    //Creates an array of all the tiles in a row
     private Tile[] ScanHorizontal(TileHolder leftMost) {
         List<Tile> listTiles = new List<Tile>();
         while (leftMost != null && leftMost.Tile != null) {
@@ -390,9 +466,15 @@ public class PlayerManager : MonoBehaviour
             leftMost.Tile.RemoveTileUnit(true);
             leftMost = leftMost.Right;
         }
+        string test = "";
+        foreach (Tile tile in listTiles) {
+            test += tile.GetName;
+        }
+        Debug.Log($"ScanHorizontal: {test}");
         return listTiles.ToArray();
     }
 
+    //Creates an array of all the tiles in a column
     private Tile[] ScanVertical(TileHolder upMost) {
         List<Tile> listTiles = new List<Tile>();
         while (upMost != null && upMost.Tile != null) {
@@ -400,6 +482,11 @@ public class PlayerManager : MonoBehaviour
             upMost.Tile.RemoveTileUnit(false);
             upMost = upMost.Down;
         }
+        string test = "";
+        foreach (Tile tile in listTiles) {
+            test += tile.GetName;
+        }
+        Debug.Log($"ScanVertical: {test}");
         return listTiles.ToArray();
     }
 
@@ -415,6 +502,7 @@ public class PlayerManager : MonoBehaviour
 
     private void MakeSingleUnits(Tile[] tiles) {
         foreach (Tile tile in tiles) {
+            Debug.Log($"Try to make Letter {tile.GetName} into single {tile.IsSingleTile}/{tile.HorizontalUnit != null}/{tile.VerticalUnit != null}");
             if (tile.IsSingleTile || tile.HorizontalUnit != null || tile.VerticalUnit != null) {
                 continue;
             }
@@ -423,6 +511,7 @@ public class PlayerManager : MonoBehaviour
             Unit newWord = new Unit();
             newWord.Setup(array, true);
             m_myUnits.Add(newWord);
+            Debug.Log($"Tile {tile.GetName} turned into a Unit");
         }
     }
 
@@ -484,6 +573,37 @@ public class PlayerManager : MonoBehaviour
         chosenTile.transform.position = targetHolder.transform.position;
 
         UpdateUnits(tileX, tileY, targetX, targetY);
+    }
+
+    [PunRPC]
+    void RPC_SwapTiles(int tileX, int tileY, int targetX, int targetY) {
+        Tile chosenTile;
+        if (tileY != Board.HandYPosition) {
+            chosenTile = m_board.GetHolderMapArray[tileX, tileY].Tile;
+        }
+        else {
+            chosenTile = m_board.GetMyHand.GetTileHolders[tileX].Tile;
+        }
+
+        TileHolder targetHolder;
+        if (targetY != Board.HandYPosition) {
+            targetHolder = m_board.GetHolderMapArray[targetX, targetY];
+        }
+        else {
+            targetHolder = m_board.GetMyHand.GetTileHolders[targetX];
+        }
+
+        targetHolder.Tile.transform.position = chosenTile.OccupiedHolder.transform.position;
+        targetHolder.Tile.OccupiedHolder = chosenTile.OccupiedHolder;
+        Tile temp = targetHolder.Tile;
+
+        targetHolder.Tile = chosenTile;
+
+        chosenTile.OccupiedHolder.Tile = temp;
+        chosenTile.OccupiedHolder = targetHolder;
+        chosenTile.transform.position = targetHolder.transform.position;
+
+        UpdateUnits(tileX, tileY, targetX, targetY, true);
     }
     #endregion
 }

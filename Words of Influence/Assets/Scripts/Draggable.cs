@@ -77,12 +77,19 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                 //If the Draggable is a Tile (will need to add Items later on)
                 Tile thisTile = GetComponent<Tile>();
                 if (thisTile != null) {
-                    if (!holder.IsOccupied && holder.IsMine) {
-                        PlayerManager.m_localPlayer.MoveTile(thisTile, holder);
-                        thisTile.OccupiedHolder.IsOccupied = false;
-                        //thisTile.OccupiedHolder = holder;
-                        holder.IsOccupied = true;
-                        //thisTile.transform.position = holder.transform.position;
+                    if (holder.IsMine) {
+                        //If it is occupied
+                        if (holder.IsOccupied) {
+                            //Probably create a Trade function?
+                            Debug.Log("SWAP");
+                            PlayerManager.m_localPlayer.SwapTiles(thisTile, holder);
+                        }
+                        else {
+                            //If it is not occupied
+                            PlayerManager.m_localPlayer.MoveTile(thisTile, holder);
+                            thisTile.OccupiedHolder.IsOccupied = false;
+                            holder.IsOccupied = true;
+                        }
                         return true;
                     }
                 }

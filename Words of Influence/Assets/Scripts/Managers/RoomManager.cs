@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 public class RoomManager : MonoBehaviourPunCallbacks
 {
     public static RoomManager m_singleton;
+    public static int m_randomSeed;
 
     void Awake() {
         if (m_singleton) {
@@ -19,19 +20,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
         m_singleton = this;
     }
 
-    public override void OnEnable() {
-        base.OnEnable();
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    public override void OnDisable() {
-        base.OnDisable();
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
-
-    void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode) {
-        if (scene.buildIndex == 1) {
-            //GameObject player = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "PlayerManager"), Vector3.zero, Quaternion.identity);
-        }
+    public static int Seed {
+        get { return m_randomSeed; }
+        set { m_randomSeed = value; }
     }
 }

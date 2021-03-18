@@ -66,7 +66,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 509266358198392961}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a81a9e081a4afa64dae6b9d42bc38c9f, type: 3}
   m_Name: 
@@ -74,4 +74,5 @@ MonoBehaviour:
   description: 
   tooltipRect: {fileID: 0}
   descriptionText: {fileID: 0}
+  stationary: 0
   tooltipAnimator: {fileID: 0}
