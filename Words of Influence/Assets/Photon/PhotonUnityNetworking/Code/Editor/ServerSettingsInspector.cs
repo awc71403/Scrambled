@@ -17,6 +17,8 @@ using Photon.Pun;
 using ExitGames.Client.Photon;
 using System.Collections.Generic;
 using System.Reflection;
+using Photon.Realtime;
+
 
 [CustomEditor(typeof(ServerSettings))]
 public class ServerSettingsInspector : Editor
@@ -123,8 +125,8 @@ public class ServerSettingsInspector : Editor
 
         if (!string.IsNullOrEmpty(PhotonNetwork.BestRegionSummaryInPreferences))
         {
-            this.regionsPrefsList = PhotonNetwork.BestRegionSummaryInPreferences.Split(';');
-            if (this.regionsPrefsList == null || this.regionsPrefsList.Length == 0 || string.IsNullOrEmpty(this.regionsPrefsList[0]))
+            this.regionsPrefsList = PhotonNetwork.BestRegionSummaryInPreferences.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+            if (this.regionsPrefsList.Length < 2)
             {
                 this.prefLabel = notAvailableLabel;
             }
@@ -300,8 +302,11 @@ public class ServerSettingsInspector : Editor
             EditorGUILayout.PropertyField(property, GUILayout.MinWidth(32));
         }
 
+        property.stringValue = property.stringValue.Trim();
         string appId = property.stringValue;
+
         string url = "https://dashboard.photonengine.com/en-US/PublicCloud";
+
         if (!string.IsNullOrEmpty(appId))
         {
             url = string.Format("https://dashboard.photonengine.com/en-US/App/Manage/{0}", appId);

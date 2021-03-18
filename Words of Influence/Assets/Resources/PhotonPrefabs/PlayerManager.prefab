@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0759e37de425b6749a5c99e90d2344a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_opponentTracker: 
   m_playerUIItemPrefab: {fileID: 8278238727221350147, guid: cc52cf01df7626442af5abd253384a81, type: 3}
   m_boardPrefab: {fileID: 4278700387943175454, guid: e3fb5b5e02edf244790136895235ff39, type: 3}
 --- !u!114 &3502506847379854077
@@ -62,11 +63,11 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  observableSearch: 2
   Synchronization: 3
   OwnershipTransfer: 0
+  observableSearch: 2
   ObservedComponents: []
-  viewIdField: 0
+  sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
 --- !u!1 &4089951117907720791

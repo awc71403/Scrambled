@@ -26,7 +26,7 @@ public class PlayerUIItem : MonoBehaviourPunCallbacks {
     #region Initialization
     private void Awake() {
         m_hpBar = GetComponentInChildren<ProgressBar>();
-        m_hpBar.maxValue = PlayerManager.m_startingHP;
+        m_hpBar.maxValue = PlayerManager.StartingHP;
         m_hp = (int)m_hpBar.maxValue;
     }
     #endregion

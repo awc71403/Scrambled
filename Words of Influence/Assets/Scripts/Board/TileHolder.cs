@@ -5,6 +5,7 @@ using UnityEngine;
 public class TileHolder : MonoBehaviour
 {
     #region Variables
+    [SerializeField]
     private Tile m_tile;
     private bool m_isOccupied;
     private bool m_isMine;

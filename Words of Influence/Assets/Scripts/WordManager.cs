@@ -28,10 +28,12 @@ public class WordManager : MonoBehaviour
     {
         word = word.ToUpper();
         word += Convert.ToChar(13);
+        Debug.Log($"The word is we are checking is '{word}'");
         if (m_wordDictionary.ContainsKey(word)) {
             Debug.Log($"'{word}' is a word!");
             return true;
         }
+        Debug.Log($"'{word}' is NOT a word!");
         return false;
     }
 }

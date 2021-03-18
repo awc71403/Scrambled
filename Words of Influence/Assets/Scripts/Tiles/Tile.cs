@@ -11,6 +11,7 @@ public class Tile : MonoBehaviour
     private int m_baseHealth;
 
     private PlayerManager m_player;
+    [SerializeField]
     private TileHolder m_occupiedHolder;
 
     private Unit m_horizontalUnit;
@@ -112,9 +113,10 @@ public class Tile : MonoBehaviour
     #region Remove
     public void RemoveTileUnit(bool isHorizontal) {
         if (m_isSingleTile) {
-            Debug.Log($"Tile called singleTile remove. There is now {m_player.MyUnits.Count} units left.");
             m_player.MyUnits.Remove(m_horizontalUnit);
+            Debug.Log($"Tile {name} called singleTile remove and Horizontal: {isHorizontal}. There is now {m_player.MyUnits.Count} units left.");
             m_isSingleTile = false;
+            isHorizontal = true;
         }
 
         if (isHorizontal) {
