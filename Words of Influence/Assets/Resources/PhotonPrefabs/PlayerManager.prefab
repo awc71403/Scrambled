@@ -46,6 +46,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_opponentTracker: 
+  m_unitPrefab: {fileID: 4326577018902969265, guid: 98766d7f53865b74d88f9c1898e600a0, type: 3}
+  m_myUnits: []
   m_playerUIItemPrefab: {fileID: 8278238727221350147, guid: cc52cf01df7626442af5abd253384a81, type: 3}
   m_boardPrefab: {fileID: 4278700387943175454, guid: e3fb5b5e02edf244790136895235ff39, type: 3}
 --- !u!114 &3502506847379854077
