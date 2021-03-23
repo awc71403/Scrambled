@@ -16,162 +16,243 @@ MonoBehaviour:
   - m_tilePrefab: {fileID: 6367847929605988623, guid: 03710f2bd5e80fc4e9751d05b2aa2332, type: 3}
     m_ID: 0
     m_name: A
-    m_health: 1
-    m_attack: 1
+    m_trait1: 0
+    m_trait2: 5
+    m_trait3: 14
+    m_health: 2
+    m_attack: 2
     m_cost: 1
   - m_tilePrefab: {fileID: 8466707750040395246, guid: e516b312c1560934f806b59bc2db1dd1, type: 3}
     m_ID: 1
     m_name: B
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 1
+    m_trait2: 3
+    m_trait3: 14
+    m_health: 5
+    m_attack: 5
+    m_cost: 3
   - m_tilePrefab: {fileID: 7910756552318550247, guid: 78bcdf1fe08936a47b9981486f135b1c, type: 3}
     m_ID: 2
     m_name: C
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 5
+    m_trait2: 7
+    m_trait3: 14
+    m_health: 2
+    m_attack: 3
+    m_cost: 2
   - m_tilePrefab: {fileID: 391056371546181972, guid: a0450f5ef6744c847bb22fe9edb54db9, type: 3}
     m_ID: 3
     m_name: D
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 1
+    m_trait2: 3
+    m_trait3: 14
+    m_health: 4
+    m_attack: 2
+    m_cost: 2
   - m_tilePrefab: {fileID: 9187017672764832627, guid: 8618fe86eae999d47874abe5c96898c7, type: 3}
     m_ID: 4
     m_name: E
-    m_health: 1
-    m_attack: 1
+    m_trait1: 0
+    m_trait2: 5
+    m_trait3: 14
+    m_health: 2
+    m_attack: 2
     m_cost: 1
   - m_tilePrefab: {fileID: 4168276873367068367, guid: ed0f3349a9cff2242adae8599130d38c, type: 3}
     m_ID: 5
     m_name: F
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 2
+    m_trait2: 3
+    m_trait3: 14
+    m_health: 4
+    m_attack: 4
+    m_cost: 3
   - m_tilePrefab: {fileID: 4166322028359513811, guid: 63bea271a9f1cdb49b61859f575e5a06, type: 3}
     m_ID: 6
     m_name: G
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 5
+    m_trait2: 6
+    m_trait3: 14
+    m_health: 3
+    m_attack: 3
+    m_cost: 2
   - m_tilePrefab: {fileID: 1165693357742846276, guid: b03c9519f5820774498b5a1c4ff3f66e, type: 3}
     m_ID: 7
     m_name: H
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 3
+    m_trait2: 4
+    m_trait3: 14
+    m_health: 7
+    m_attack: 3
+    m_cost: 3
   - m_tilePrefab: {fileID: 2689129762512456325, guid: 9b7d1f510740e8a45842874d6b3510d0, type: 3}
     m_ID: 8
     m_name: I
-    m_health: 1
-    m_attack: 1
+    m_trait1: 0
+    m_trait2: 2
+    m_trait3: 14
+    m_health: 2
+    m_attack: 2
     m_cost: 1
   - m_tilePrefab: {fileID: 3833788076190108888, guid: e33ea5c6589c6bb428038c00dc9b1dfc, type: 3}
     m_ID: 9
     m_name: J
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 2
+    m_trait2: 5
+    m_trait3: 14
+    m_health: 6
+    m_attack: 7
+    m_cost: 4
   - m_tilePrefab: {fileID: 7982512129908554755, guid: cccc368a0c0a512489a5c43b9e200aa2, type: 3}
     m_ID: 10
     m_name: K
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 3
+    m_trait2: 4
+    m_trait3: 2
+    m_health: 7
+    m_attack: 5
+    m_cost: 4
   - m_tilePrefab: {fileID: 7967539320080863908, guid: b8a560dcdcac5c346a04677863c6f50b, type: 3}
     m_ID: 11
     m_name: L
+    m_trait1: 3
+    m_trait2: 7
+    m_trait3: 14
     m_health: 1
-    m_attack: 1
+    m_attack: 2
     m_cost: 1
   - m_tilePrefab: {fileID: 1251911949471832240, guid: 9547ab983d66c924583b8e62df437b25, type: 3}
     m_ID: 12
     m_name: M
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 4
+    m_trait2: 9
+    m_trait3: 14
+    m_health: 6
+    m_attack: 3
+    m_cost: 3
   - m_tilePrefab: {fileID: 4932814695107741930, guid: ee71618b78afc7e41bc52b20ccd8b6d5, type: 3}
     m_ID: 13
     m_name: N
-    m_health: 1
+    m_trait1: 4
+    m_trait2: 8
+    m_trait3: 14
+    m_health: 3
     m_attack: 1
     m_cost: 1
   - m_tilePrefab: {fileID: 6044431857533167797, guid: 86ce087020d57854e84fafc21b93d625, type: 3}
     m_ID: 14
     m_name: O
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 0
+    m_trait2: 7
+    m_trait3: 14
+    m_health: 3
+    m_attack: 3
+    m_cost: 2
   - m_tilePrefab: {fileID: 8819566757850610197, guid: 4be7e1f6461e77a46a5b287a256460d9, type: 3}
     m_ID: 15
     m_name: P
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 1
+    m_trait2: 9
+    m_trait3: 14
+    m_health: 4
+    m_attack: 2
+    m_cost: 2
   - m_tilePrefab: {fileID: 7181960447127536703, guid: 65f24af35e2692b47bf5c593fb967dbd, type: 3}
     m_ID: 16
     m_name: Q
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 1
+    m_trait2: 12
+    m_trait3: 14
+    m_health: 9
+    m_attack: 8
+    m_cost: 5
   - m_tilePrefab: {fileID: 3655409187386401972, guid: 876b7ff6e1d38d94ea543d2de76eca9a, type: 3}
     m_ID: 17
     m_name: R
-    m_health: 1
-    m_attack: 1
+    m_trait1: 8
+    m_trait2: 9
+    m_trait3: 14
+    m_health: 2
+    m_attack: 2
     m_cost: 1
   - m_tilePrefab: {fileID: 6547321273172711602, guid: 5432da050622ead4782c6fdf97aa806a, type: 3}
     m_ID: 18
     m_name: S
-    m_health: 1
-    m_attack: 1
+    m_trait1: 5
+    m_trait2: 10
+    m_trait3: 14
+    m_health: 2
+    m_attack: 2
     m_cost: 1
   - m_tilePrefab: {fileID: 4773598598064105510, guid: 9ae432867745a5b48b12c14fa6a7f00d, type: 3}
     m_ID: 19
     m_name: T
+    m_trait1: 2
+    m_trait2: 8
+    m_trait3: 14
     m_health: 1
-    m_attack: 1
+    m_attack: 3
     m_cost: 1
   - m_tilePrefab: {fileID: 199340656532392169, guid: 006070b90c393764dbc0984dcb0eea29, type: 3}
     m_ID: 20
     m_name: U
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 0
+    m_trait2: 6
+    m_trait3: 14
+    m_health: 3
+    m_attack: 3
+    m_cost: 2
   - m_tilePrefab: {fileID: 6379617803897945256, guid: 5c0940971cdd6e246be2c45c7337ef1b, type: 3}
     m_ID: 21
     m_name: V
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 6
+    m_trait2: 8
+    m_trait3: 14
+    m_health: 7
+    m_attack: 7
+    m_cost: 4
   - m_tilePrefab: {fileID: 2219033821648923576, guid: 18370d931c4b2b64b887743030f213c8, type: 3}
     m_ID: 22
     m_name: W
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 4
+    m_trait2: 6
+    m_trait3: 14
+    m_health: 9
+    m_attack: 5
+    m_cost: 4
   - m_tilePrefab: {fileID: 5021254484583632186, guid: f3a5979f9bb120b46b607eba04d3584c, type: 3}
     m_ID: 23
     m_name: X
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 11
+    m_trait2: 7
+    m_trait3: 2
+    m_health: 8
+    m_attack: 8
+    m_cost: 5
   - m_tilePrefab: {fileID: 3944225096696378187, guid: 016a1b705c7ebab49ad526f5f4d6787e, type: 3}
     m_ID: 24
     m_name: Y
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 0
+    m_trait2: 2
+    m_trait3: 6
+    m_health: 4
+    m_attack: 4
+    m_cost: 3
   - m_tilePrefab: {fileID: 3543697754141322828, guid: 0ac6dc040e34f93499e7b71cd96459a1, type: 3}
     m_ID: 25
     m_name: Z
-    m_health: 1
-    m_attack: 1
-    m_cost: 1
+    m_trait1: 10
+    m_trait2: 13
+    m_trait3: 14
+    m_health: 8
+    m_attack: 9
+    m_cost: 5
   - m_tilePrefab: {fileID: 2920402069789265251, guid: 90fcb0ab27bffbd4e8981c524dabde74, type: 3}
     m_ID: 26
     m_name: ' '
+    m_trait1: 14
+    m_trait2: 14
+    m_trait3: 14
     m_health: 1
     m_attack: 1
     m_cost: 1

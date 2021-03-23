@@ -110,6 +110,10 @@ public class GameManager : MonoBehaviourPunCallbacks {
     #endregion
 
     #region Getter
+    public List<PlayerManager> GetPlayerList {
+        get { return m_playerList; }
+    }
+
     public Canvas GetCanvas {
         get { return m_canvas; }
     }

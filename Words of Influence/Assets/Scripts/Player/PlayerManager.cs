@@ -35,6 +35,8 @@ public class PlayerManager : MonoBehaviour
     private TextMeshProUGUI m_moneyText;
 
     [SerializeField]
+    private Unit m_unitPrefab;
+    [SerializeField]
     private List<Unit> m_myUnits;
 
     [SerializeField]
@@ -237,7 +239,7 @@ public class PlayerManager : MonoBehaviour
     }
     #endregion
 
-    #region Battle
+    #region Matchmaking
     //Add a way to permenately remove soem stuff
 
     public void SetGhostOpponent(int opponentID) {
@@ -269,6 +271,10 @@ public class PlayerManager : MonoBehaviour
     public void SetTracker(List<int> tracker) {
         m_opponentTracker = tracker;
     }
+    #endregion
+
+    #region Board
+
     #endregion
 
     #region Tile
@@ -492,9 +498,9 @@ public class PlayerManager : MonoBehaviour
 
     private bool WordCheck(Tile[] tiles) {
         if (WordManager.IsWord(TileToString(tiles))) {
-            Unit newWord = new Unit();
-            newWord.Setup(tiles, true);
-            m_myUnits.Add(newWord);
+            Unit newUnit = Instantiate(m_unitPrefab).GetComponent<Unit>();
+            newUnit.Setup(tiles, true);
+            m_myUnits.Add(newUnit);
             return true;
         }
         return false;
@@ -508,9 +514,9 @@ public class PlayerManager : MonoBehaviour
             }
             Tile[] array = new Tile[1];
             array[0] = tile;
-            Unit newWord = new Unit();
-            newWord.Setup(array, true);
-            m_myUnits.Add(newWord);
+            Unit newUnit = Instantiate(m_unitPrefab).GetComponent<Unit>();
+            newUnit.Setup(array, true);
+            m_myUnits.Add(newUnit);
             Debug.Log($"Tile {tile.GetName} turned into a Unit");
         }
     }
@@ -521,6 +527,50 @@ public class PlayerManager : MonoBehaviour
             word = word + tiles[i].GetName;
         }
         return word;
+    }
+    #endregion
+
+    #region Unit
+    public List<Unit> OrderUnits() {
+        List<Unit> orderedUnits = new List<Unit>();
+        BoardHolder[,] boardHolders = m_board.GetHolderMapArray;
+        //Add Everything
+        for (int y = Board.BoardColumns / 2; y < Board.BoardColumns; y++) {
+            for (int x = 0; x < Board.BoardRows; x++) {
+                BoardHolder holder = boardHolders[x, y];
+                if (holder.IsOccupied) {
+                    Tile tile = holder.Tile;
+                    if (tile.IsFirstHorizontal || tile.IsSingleTile) {
+                        Unit unit = tile.HorizontalUnit;
+                        orderedUnits.Add(unit);
+                    }
+                    if (boardHolders[x, y].Tile.IsFirstVertical) {
+                        Unit unit = tile.VerticalUnit;
+                        orderedUnits.Add(unit);
+                    }
+                }
+            }
+        }
+        //Reorganize Firewall
+        for (int i = orderedUnits.Count - 1; i >= 0; i--) {
+            Unit unit = orderedUnits[i];
+            TileDatabaseSO.TileData.Trait[] traits = unit.GetTraits;
+            if (traits[0] == TileDatabaseSO.TileData.Trait.FIREWALL || traits[1] == TileDatabaseSO.TileData.Trait.FIREWALL || traits[2] == TileDatabaseSO.TileData.Trait.FIREWALL) {
+                orderedUnits.RemoveAt(i);
+                orderedUnits.Insert(0, unit);
+            }
+        }
+        //Reorganize Blacklist
+        for (int i = 0; i < orderedUnits.Count; i++) {
+            Unit unit = orderedUnits[i];
+            TileDatabaseSO.TileData.Trait[] traits = unit.GetTraits;
+            if (traits[0] == TileDatabaseSO.TileData.Trait.BLACKLIST || traits[1] == TileDatabaseSO.TileData.Trait.BLACKLIST || traits[2] == TileDatabaseSO.TileData.Trait.BLACKLIST) {
+                orderedUnits.RemoveAt(i);
+                orderedUnits.Add(unit);
+            }
+        }
+
+        return orderedUnits;
     }
     #endregion
 

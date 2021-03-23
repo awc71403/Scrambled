@@ -11,6 +11,8 @@ public class Tile : MonoBehaviour
     private int m_baseHealth;
 
     private PlayerManager m_player;
+
+    private TileDatabaseSO.TileData m_data;
     [SerializeField]
     private TileHolder m_occupiedHolder;
 
@@ -33,6 +35,8 @@ public class Tile : MonoBehaviour
 
     #region Initialization
     public void Setup(TileDatabaseSO.TileData data, PlayerManager owner) {
+        m_data = data;
+
         m_name = data.m_name;
         m_baseDamage = data.m_attack;
         m_baseHealth = data.m_health;
@@ -53,7 +57,19 @@ public class Tile : MonoBehaviour
         get { return m_occupiedHolder; }
         set { m_occupiedHolder = value; }
     }
-    
+
+    public TileDatabaseSO.TileData GetData {
+        get { return m_data; }
+    }
+
+    public int GetDamage {
+        get { return m_baseDamage; }
+    }
+
+    public int GetHealth {
+        get { return m_baseHealth; }
+    }
+
     public Unit HorizontalUnit {
         get { return m_horizontalUnit; }
         set { m_horizontalUnit = value; }
@@ -114,6 +130,7 @@ public class Tile : MonoBehaviour
     public void RemoveTileUnit(bool isHorizontal) {
         if (m_isSingleTile) {
             m_player.MyUnits.Remove(m_horizontalUnit);
+            Destroy(m_horizontalUnit.gameObject);
             Debug.Log($"Tile {name} called singleTile remove and Horizontal: {isHorizontal}. There is now {m_player.MyUnits.Count} units left.");
             m_isSingleTile = false;
             isHorizontal = true;
@@ -124,6 +141,7 @@ public class Tile : MonoBehaviour
                 //May cause a bug since list always deletes from from to back and we may have multiple copies of the same Unit (especially single letter)?
                 m_isFirstHorizontal = false;
                 m_player.MyUnits.Remove(m_horizontalUnit);
+                Destroy(m_horizontalUnit.gameObject);
             }
             m_horizontalDamage = 0;
             m_horizontalHealth = 0;
@@ -134,6 +152,7 @@ public class Tile : MonoBehaviour
                 //May cause a bug since list always deletes from from to back and we may have multiple copies of the same Unit (especially single letter)?
                 m_isFirstVertical = false;
                 m_player.MyUnits.Remove(m_verticalUnit);
+                Destroy(m_verticalUnit.gameObject);
             }
             m_verticalDamage = 0;
             m_verticalHealth = 0;
