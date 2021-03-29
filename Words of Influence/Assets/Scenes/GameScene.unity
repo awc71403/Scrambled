@@ -4716,7 +4716,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86d6704151491b046aea541f65c90775, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_allTiles:
+  m_buyTiles:
   - {fileID: 405684846}
   - {fileID: 641287231}
   - {fileID: 255891952}
@@ -4727,6 +4727,52 @@ MonoBehaviour:
   m_refreshButton: {fileID: 2140364757}
   m_expButton: {fileID: 844891104}
   m_switch: {fileID: 373700916}
+  m_poolRates:
+  - oneRate: 100
+    twoRate: 0
+    threeRate: 0
+    fourRate: 0
+    fiveRate: 0
+  - oneRate: 100
+    twoRate: 0
+    threeRate: 0
+    fourRate: 0
+    fiveRate: 0
+  - oneRate: 75
+    twoRate: 25
+    threeRate: 0
+    fourRate: 0
+    fiveRate: 0
+  - oneRate: 55
+    twoRate: 30
+    threeRate: 15
+    fourRate: 0
+    fiveRate: 0
+  - oneRate: 45
+    twoRate: 33
+    threeRate: 20
+    fourRate: 2
+    fiveRate: 0
+  - oneRate: 35
+    twoRate: 35
+    threeRate: 25
+    fourRate: 5
+    fiveRate: 0
+  - oneRate: 22
+    twoRate: 35
+    threeRate: 30
+    fourRate: 12
+    fiveRate: 1
+  - oneRate: 15
+    twoRate: 25
+    threeRate: 35
+    fourRate: 20
+    fiveRate: 5
+  - oneRate: 10
+    twoRate: 15
+    threeRate: 30
+    fourRate: 30
+    fiveRate: 15
 --- !u!1 &1257247967
 GameObject:
   m_ObjectHideFlags: 0
@@ -8066,7 +8112,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 272.5, y: 0}
   m_SizeDelta: {x: 0, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1918558635

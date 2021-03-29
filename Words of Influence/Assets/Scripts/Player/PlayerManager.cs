@@ -18,6 +18,8 @@ public class PlayerManager : MonoBehaviour
     private int m_HP;
     private int m_money;
 
+    private int m_level;
+
     private int m_winStreak;
     private int m_lossStreak;
 
@@ -50,7 +52,8 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager m_localPlayer;
 
     public const int StartingHP = 100;
-    public const int StartingMoney = 5;
+    public const int StartingMoney = 2;
+    public const int StartingLevel = 1;
     public const int NoOpponent = -1;
     public const int GhostID = -2;
     public const int StartRepetition = 4;
@@ -66,6 +69,8 @@ public class PlayerManager : MonoBehaviour
 
         m_HP = StartingHP;
         m_money = StartingMoney;
+
+        m_level = StartingLevel;
 
         m_tilesInHand = 0;
 
@@ -133,6 +138,10 @@ public class PlayerManager : MonoBehaviour
 
     public int GetMoney {
         get { return m_money; }
+    }
+
+    public int GetLevel {
+        get { return m_level; }
     }
 
     public Camera GetCamera {
@@ -588,7 +597,7 @@ public class PlayerManager : MonoBehaviour
 
     [PunRPC]
     void RPC_BuyTile(int ID) {
-        TileDatabaseSO.TileData tileData = GameManager.m_singleton.m_tileDatabase.allTiles[ID];
+        TileDatabaseSO.TileData tileData = TileDatabaseSO.allTiles[ID];
         m_money -= tileData.m_cost;
         Tile newTile = Instantiate(tileData.m_tilePrefab);
         newTile.Setup(tileData, this);

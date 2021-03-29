@@ -104,6 +104,10 @@ public class Unit: MonoBehaviour
     public int GetUnitLength {
         get { return m_unitLength; }
     }
+
+    public int GetDamage {
+        get { return m_damage; }
+    }
     #endregion
 
     #region Transform

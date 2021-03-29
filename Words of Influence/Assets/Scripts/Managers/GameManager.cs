@@ -507,7 +507,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
         }
     }
 
-    private void PlayerReadyToProceed() {
+    public void PlayerReadyToProceed() {
         m_PV.RPC("RPC_PlayerReadyToProceed", RpcTarget.MasterClient);
     }
 

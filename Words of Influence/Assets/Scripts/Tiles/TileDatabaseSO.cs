@@ -16,12 +16,12 @@ public class TileDatabaseSO : ScriptableObject {
 
         public enum Trait { LINK, WORM, VIRUS, ENCRYPTER, FIREWALL, BLACKLIST, TROJAN, RELAY, MACRO, BOTNET, COUNTER, OPS, CIPHER, ZERO, NONE }
 
+        public int m_cost;
 
         public int m_health;
         public int m_attack;
-        public int m_cost;
     }
 
     [SerializeField]
-    public List<TileData> allTiles;
+    public static List<TileData> allTiles;
 }
