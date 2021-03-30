@@ -101,7 +101,7 @@ public class BattleManager : MonoBehaviour
             StartCoroutine(EnemyCombat());
         }
         else {
-            int random = Random.Range(0, 1);
+            int random = Random.Range(0, 2);
             if (random == 0) {
                 StartCoroutine(MyCombat());
             }

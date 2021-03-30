@@ -289,7 +289,7 @@ public class PlayerManager : MonoBehaviour
     #region Tile
     public void MoveTile(Tile tile, TileHolder targetHolder) {
         TileHolder currentHolder = tile.OccupiedHolder;
-        m_PV.RPC("RPC_PlaceTile", RpcTarget.All, currentHolder.X, currentHolder.Y, targetHolder.X, targetHolder.Y);
+        m_PV.RPC("RPC_MoveTile", RpcTarget.All, currentHolder.X, currentHolder.Y, targetHolder.X, targetHolder.Y);
     }
 
     public void SwapTiles(Tile tile, TileHolder targetHolder) {
@@ -541,6 +541,7 @@ public class PlayerManager : MonoBehaviour
 
     #region Unit
     public List<Unit> OrderUnits() {
+        Debug.Log("OrderUnits");
         List<Unit> orderedUnits = new List<Unit>();
         BoardHolder[,] boardHolders = m_board.GetHolderMapArray;
         //Add Everything
@@ -548,12 +549,15 @@ public class PlayerManager : MonoBehaviour
             for (int x = 0; x < Board.BoardRows; x++) {
                 BoardHolder holder = boardHolders[x, y];
                 if (holder.IsOccupied) {
+                    Debug.Log("Found a tile");
                     Tile tile = holder.Tile;
                     if (tile.IsFirstHorizontal || tile.IsSingleTile) {
+                        Debug.Log("It's a unit1");
                         Unit unit = tile.HorizontalUnit;
                         orderedUnits.Add(unit);
                     }
                     if (boardHolders[x, y].Tile.IsFirstVertical) {
+                        Debug.Log("It's a unit2");
                         Unit unit = tile.VerticalUnit;
                         orderedUnits.Add(unit);
                     }
@@ -597,7 +601,7 @@ public class PlayerManager : MonoBehaviour
 
     [PunRPC]
     void RPC_BuyTile(int ID) {
-        TileDatabaseSO.TileData tileData = TileDatabaseSO.allTiles[ID];
+        TileDatabaseSO.TileData tileData = GameManager.m_singleton.m_tileDatabase.allTiles[ID];
         m_money -= tileData.m_cost;
         Tile newTile = Instantiate(tileData.m_tilePrefab);
         newTile.Setup(tileData, this);
@@ -605,7 +609,7 @@ public class PlayerManager : MonoBehaviour
     }
 
     [PunRPC]
-    void RPC_PlaceTile(int tileX, int tileY, int targetX, int targetY) {
+    void RPC_MoveTile(int tileX, int tileY, int targetX, int targetY) {
         Tile chosenTile;
         if (tileY != Board.HandYPosition) {
             chosenTile = m_board.GetHolderMapArray[tileX, tileY].Tile;
@@ -626,6 +630,7 @@ public class PlayerManager : MonoBehaviour
 
 
         targetHolder.Tile = chosenTile;
+        targetHolder.IsOccupied = true;
         chosenTile.OccupiedHolder.Tile = null;
         chosenTile.OccupiedHolder.IsOccupied = false;
         chosenTile.OccupiedHolder = targetHolder;

@@ -24,7 +24,6 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     }
     #endregion
 
-
     #region Dragging
     public void OnBeginDrag(PointerEventData eventData) {
         if (eventData.button != PointerEventData.InputButton.Left) {
@@ -87,8 +86,6 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                         else {
                             //If it is not occupied
                             PlayerManager.m_localPlayer.MoveTile(thisTile, holder);
-                            thisTile.OccupiedHolder.IsOccupied = false;
-                            holder.IsOccupied = true;
                         }
                         return true;
                     }

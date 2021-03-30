@@ -95,6 +95,14 @@ public class GameManager : MonoBehaviourPunCallbacks {
 
     #region Update
     private void Update() {
+        if (m_currentPhase == Phase.FIGHT && !m_isBuffer) {
+            return;
+        }
+        //Test
+        if (m_currentPhase == Phase.BUY && !m_isBuffer) {
+            return;
+        }
+        //End Test
         if (m_currentTimer > 0) {
             m_currentTimer -= Time.deltaTime;
             UpdateTimerUI();
@@ -142,6 +150,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
     #region Sort
     private void SortPlayers() {
         m_playerList.Sort(PlayerIDSort);
+        m_aliveList.Sort(PlayerIDSort);
     }
 
     private int PlayerIDSort(PlayerManager player1, PlayerManager player2) {
@@ -499,7 +508,8 @@ public class GameManager : MonoBehaviourPunCallbacks {
         if (m_currentPhase == Phase.BUY) {
             m_currentPhase = Phase.FIGHT;
             //For Testing
-            m_currentTimer = m_buyTime;
+            Matchmake();
+            BattleManager.m_singleton.SetUpBattle(PlayerManager.m_localPlayer, m_playerList[PlayerManager.m_localPlayer.OpponentID]);
         }
         else {
             m_currentPhase = Phase.BUY;

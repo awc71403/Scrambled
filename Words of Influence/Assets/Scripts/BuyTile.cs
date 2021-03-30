@@ -31,6 +31,7 @@ public class BuyTile : MonoBehaviour
     }
 
     public void Setup(TileDatabaseSO.TileData myData, TileShop shopRef) {
+        Debug.Log("BuyTile Setup");
         m_health = myData.m_health;
         m_attack = myData.m_attack;
         m_cost = myData.m_cost;
@@ -51,6 +52,12 @@ public class BuyTile : MonoBehaviour
     #region Update
     private void Update() {
         CanBuy();
+    }
+    #endregion
+
+    #region Getter
+    public TileDatabaseSO.TileData GetData {
+        get { return m_myData; }
     }
     #endregion
 

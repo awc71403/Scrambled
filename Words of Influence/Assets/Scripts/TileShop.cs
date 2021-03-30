@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
 public class TileShop : MonoBehaviour
 {
@@ -21,6 +22,9 @@ public class TileShop : MonoBehaviour
     #region Variables
     public static TileShop m_singleton;
 
+    private PhotonView m_PV;
+    private List<TileDatabaseSO.TileData> m_allTiles;
+
     public List<BuyTile> m_buyTiles;
 
     [SerializeField]
@@ -31,8 +35,6 @@ public class TileShop : MonoBehaviour
     private Button m_expButton;
     [SerializeField]
     private SwitchManager m_switch;
-
-    private TileDatabaseSO m_tileDatabase;
 
     private Dictionary<int, List<int>> m_poolDictionary;
 
@@ -49,22 +51,35 @@ public class TileShop : MonoBehaviour
     #region Initialization
     private void Awake() {
         m_singleton = this;
+        m_PV = GetComponent<PhotonView>();
+        m_allTiles = GameManager.m_singleton.m_tileDatabase.allTiles;
     }
 
     private void Start() {
-        m_tileDatabase = GameManager.m_singleton.m_tileDatabase;
         SetupShop();
         GenerateTiles();
     }
 
     public void GenerateTiles() {
         for (int i = 0; i < m_buyTiles.Count; i++) {
-            //m_buyTiles[i].Setup(m_tileDatabase.allTiles[Random.Range(0, m_tileDatabase.allTiles.Count)], this);
+            m_buyTiles[i].Setup(m_allTiles[Roll()], this);
             m_buyTiles[i].gameObject.SetActive(true);
         }
     }
 
+    public void RegenerateTiles() {
+        for (int i = 0; i < m_buyTiles.Count; i++) {
+            if (m_buyTiles[i] != null) {
+                TileDatabaseSO.TileData data = m_buyTiles[i].GetData;
+                AddToPool(data.m_cost, data.m_ID);
+            }
+        }
+
+        GenerateTiles();
+    }
+
     public void SetupShop() {
+        Debug.Log("SetupShop");
         List<int> onePool = new List<int>();
         List<int> twoPool = new List<int>();
         List<int> threePool = new List<int>();
@@ -73,7 +88,7 @@ public class TileShop : MonoBehaviour
 
         m_poolDictionary = new Dictionary<int, List<int>>();
 
-        foreach (TileDatabaseSO.TileData tile in TileDatabaseSO.allTiles) {
+        foreach (TileDatabaseSO.TileData tile in m_allTiles) {
             switch (tile.m_cost) {
                 case 1:
                     for (int i = 0; i < onePoolSize; i++) {
@@ -130,7 +145,7 @@ public class TileShop : MonoBehaviour
         PoolRate rates = m_poolRates[level - 1];
 
         int chosenCost;
-        int random = Random.Range(1, 100);
+        int random = Random.Range(1, 101);
         if (random <= rates.oneRate) {
             chosenCost = 1;
         }
@@ -146,7 +161,21 @@ public class TileShop : MonoBehaviour
         else {
             chosenCost = 5;
         }
-        return 0;
+
+        List<int> pool = m_poolDictionary[chosenCost];
+        random = Random.Range(0, pool.Count);
+        int chosen = pool[random];
+        RemoveFromPool(chosenCost, random);
+        return chosen;
+    }
+
+    public void RemoveFromPool(int pool, int location) {
+        m_PV.RPC("RPC_RemoveFromPool", RpcTarget.All, pool, location);
+    }
+
+    public void AddToPool(int pool, int ID) {
+        Debug.Log($"AddToPool: Pool {pool} and ID {ID}");
+        m_PV.RPC("RPC_AddToPool", RpcTarget.All, pool, ID);
     }
 
     public void BuyTile(TileDatabaseSO.TileData cardData) {
@@ -167,12 +196,24 @@ public class TileShop : MonoBehaviour
             m_switch.AnimateSwitch();
             return;
         }
-        GenerateTiles();
+        RegenerateTiles();
     }
 
     public void Refresh() {
         PlayerManager.m_localPlayer.UsedRefresh();
-        GenerateTiles();
+        RegenerateTiles();
+    }
+    #endregion
+
+    #region RPC
+    [PunRPC]
+    void RPC_RemoveFromPool(int pool, int location) {
+        m_poolDictionary[pool].RemoveAt(location);
+    }
+
+    [PunRPC]
+    void RPC_AddToPool(int pool, int ID) {
+        m_poolDictionary[pool].Add(ID);
     }
     #endregion
 }

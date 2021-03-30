@@ -23,5 +23,5 @@ public class TileDatabaseSO : ScriptableObject {
     }
 
     [SerializeField]
-    public static List<TileData> allTiles;
+    public List<TileData> allTiles;
 }
