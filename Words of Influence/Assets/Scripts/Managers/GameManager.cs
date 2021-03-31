@@ -129,6 +129,14 @@ public class GameManager : MonoBehaviourPunCallbacks {
     public int GetRepetition {
         get { return m_repetition; }
     }
+
+    public Phase GetCurrentPhase {
+        get { return m_currentPhase; }
+    }
+
+    public bool GetIsBuffer {
+        get { return m_isBuffer; }
+    }
     #endregion
 
     #region Players

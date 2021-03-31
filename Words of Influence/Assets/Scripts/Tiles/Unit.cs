@@ -163,8 +163,8 @@ public class Unit: MonoBehaviour
     }
 
     IEnumerator DeathAnimation() {
+        Debug.Log("Death");
         // loop over 0.5 second backwards
-        print("death time");
         for (float i = 0.25f; i >= 0; i -= Time.deltaTime) {
             // set color with i as alpha
             m_spriteRenderer.color = new Color(1, 1, 1, i);

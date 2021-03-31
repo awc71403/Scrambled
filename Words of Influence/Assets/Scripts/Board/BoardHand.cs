@@ -10,6 +10,7 @@ public class BoardHand : MonoBehaviour
     private PlayerManager m_player;
 
     //Temporary. Change the Transform into a class to hold the tile and have a drag/dropper.
+    [SerializeField]
     private HandHolder[] m_handHolders;
     #endregion
 

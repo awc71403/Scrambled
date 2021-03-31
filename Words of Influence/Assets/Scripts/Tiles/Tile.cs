@@ -16,16 +16,19 @@ public class Tile : MonoBehaviour
     [SerializeField]
     private TileHolder m_occupiedHolder;
 
+    [SerializeField]
     private Unit m_horizontalUnit;
     private int m_horizontalDamage;
     private int m_horizontalHealth;
+    [SerializeField]
     private bool m_isFirstHorizontal;
 
     private Unit m_verticalUnit;
     private int m_verticalDamage;
     private int m_verticalHealth;
+    [SerializeField]
     private bool m_isFirstVertical;
-
+    [SerializeField]
     private bool m_isSingleTile;
 
     private GameObject m_UI;
@@ -120,9 +123,15 @@ public class Tile : MonoBehaviour
     }
     #endregion
 
-    #region Update
-    public void UpdateUI() {
-        
+    #region Mouse
+    private void OnMouseOver() {
+        Debug.Log("OnMouseOver");
+        if (Input.GetKeyDown(KeyCode.E)) {
+            if (m_player.GetPhotonView.IsMine) {
+                Debug.Log("Sell called");
+                m_player.OnSoldTile(this);
+            }
+        }
     }
     #endregion
 

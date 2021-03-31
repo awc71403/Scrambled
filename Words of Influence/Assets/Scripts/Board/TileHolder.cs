@@ -9,7 +9,9 @@ public class TileHolder : MonoBehaviour
     private Tile m_tile;
     private bool m_isOccupied;
     private bool m_isMine;
+    [SerializeField]
     private int m_x;
+    [SerializeField]
     private int m_y;
     
     private TileHolder m_leftHolder;

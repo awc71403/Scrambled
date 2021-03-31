@@ -184,8 +184,15 @@ public class PlayerManager : MonoBehaviour
     #region Shop
     public void OnBoughtTile(TileDatabaseSO.TileData tileData) {
         m_PV.RPC("RPC_BuyTile", RpcTarget.All, tileData.m_ID);
+        //Will need to update globally when showing interest to other players
         UpdateMoney();
         //Update UI
+    }
+
+    public void OnSoldTile(Tile tile) {
+        TileShop.m_singleton.AddToPool(tile.GetData.m_cost, tile.GetData.m_ID);
+        m_PV.RPC("RPC_SellTile", RpcTarget.All, tile.OccupiedHolder.X, tile.OccupiedHolder.Y);
+        UpdateMoney();
     }
 
     public void Income() {
@@ -297,7 +304,7 @@ public class PlayerManager : MonoBehaviour
         m_PV.RPC("RPC_SwapTiles", RpcTarget.All, currentHolder.X, currentHolder.Y, targetHolder.X, targetHolder.Y);
     }
 
-    private void UpdateUnits(int fromX, int fromY, int targetX, int targetY, bool isSwapping = false) {
+    private void UpdateUnits(int fromX, int fromY, int targetX, int targetY, bool isSwapping = false, bool isRemoving = false) {
         //From: Words left and right of letter being moved
         //Horizontal
 
@@ -305,7 +312,65 @@ public class PlayerManager : MonoBehaviour
         //m_myUnits = new List<Unit>();
 
         //If the tile is on the board
-        if (isSwapping) {
+        if (isRemoving) {
+            if (fromY != Board.HandYPosition) {
+                Tile[] fromLeftH = null;
+                bool fromLeftHBool = true;
+
+                Tile[] fromRightH = null;
+                bool fromRightHBool = true;
+
+                Tile[] fromUpV = null;
+                bool fromUpVBool = true;
+
+                Tile[] fromDownV = null;
+                bool fromDownVBool = true;
+
+                TileHolder newStart = m_board.GetHolderMapArray[fromX, fromY];
+                while (newStart.Left != null && newStart.Left.Tile != null) {
+                    newStart = newStart.Left;
+                }
+                if (newStart.X != fromX) {
+                    fromLeftH = ScanHorizontal(newStart);
+                    fromLeftHBool = WordCheck(fromLeftH);
+                }
+                newStart = m_board.GetHolderMapArray[fromX, fromY];
+                newStart = newStart.Right;
+                if (newStart != null && newStart.Tile != null) {
+                    fromRightH = ScanHorizontal(newStart);
+                    fromRightHBool = WordCheck(fromRightH);
+                }
+                //Vertical
+                newStart = m_board.GetHolderMapArray[fromX, fromY];
+                while (newStart.Up != null && newStart.Up.Tile != null) {
+                    newStart = newStart.Up;
+                }
+                if (newStart.Y != fromY) {
+                    fromUpV = ScanVertical(newStart);
+                    fromUpVBool = WordCheck(fromUpV);
+                }
+                newStart = m_board.GetHolderMapArray[fromX, fromY];
+                newStart = newStart.Down;
+                if (newStart != null && newStart.Tile != null) {
+                    fromDownV = ScanVertical(newStart);
+                    fromDownVBool = WordCheck(fromDownV);
+                }
+
+                //Singles
+                if (fromLeftH != null && !fromLeftHBool) {
+                    MakeSingleUnits(fromLeftH);
+                }
+                if (fromRightH != null && !fromRightHBool) {
+                    MakeSingleUnits(fromRightH);
+                }
+                if (fromUpV != null && !fromUpVBool) {
+                    MakeSingleUnits(fromUpV);
+                }
+                if (fromDownV != null && !fromDownVBool) {
+                    MakeSingleUnits(fromDownV);
+                }
+            }
+        } else if (isSwapping) {
             if (fromY != Board.HandYPosition) {
                 //Horizontal
                 TileHolder newStart = m_board.GetHolderMapArray[fromX, fromY];
@@ -369,9 +434,6 @@ public class PlayerManager : MonoBehaviour
         }
         else {
             if (fromY != Board.HandYPosition) {
-                //Will need to be updated for SWAP
-                Debug.Log("From Update");
-
                 Tile[] fromLeftH = null;
                 bool fromLeftHBool = true;
 
@@ -541,7 +603,6 @@ public class PlayerManager : MonoBehaviour
 
     #region Unit
     public List<Unit> OrderUnits() {
-        Debug.Log("OrderUnits");
         List<Unit> orderedUnits = new List<Unit>();
         BoardHolder[,] boardHolders = m_board.GetHolderMapArray;
         //Add Everything
@@ -549,15 +610,12 @@ public class PlayerManager : MonoBehaviour
             for (int x = 0; x < Board.BoardRows; x++) {
                 BoardHolder holder = boardHolders[x, y];
                 if (holder.IsOccupied) {
-                    Debug.Log("Found a tile");
                     Tile tile = holder.Tile;
                     if (tile.IsFirstHorizontal || tile.IsSingleTile) {
-                        Debug.Log("It's a unit1");
                         Unit unit = tile.HorizontalUnit;
                         orderedUnits.Add(unit);
                     }
-                    if (boardHolders[x, y].Tile.IsFirstVertical) {
-                        Debug.Log("It's a unit2");
+                    if (holder.Tile.IsFirstVertical) {
                         Unit unit = tile.VerticalUnit;
                         orderedUnits.Add(unit);
                     }
@@ -595,6 +653,7 @@ public class PlayerManager : MonoBehaviour
 
     [PunRPC]
     void RPC_TakeDamage(int damage) {
+        Debug.Log("TakeDamage called");
         m_HP -= damage;
         m_playerUIItem.UpdateHP(m_HP);
     }
@@ -606,6 +665,29 @@ public class PlayerManager : MonoBehaviour
         Tile newTile = Instantiate(tileData.m_tilePrefab);
         newTile.Setup(tileData, this);
         m_board.GetMyHand.Add(newTile);
+    }
+
+    [PunRPC]
+    void RPC_SellTile(int x, int y) {
+        Debug.Log($"SellTile: {x} and {y}");
+        Tile tile;
+        if (y != Board.HandYPosition) {
+            tile = m_board.GetHolderMapArray[x, y].Tile;
+        }
+        else {
+            tile = m_board.GetMyHand.GetTileHolders[x].Tile;
+            m_tilesInHand--;
+        }
+        Debug.Log(tile);
+        TileHolder tileHolder = tile.OccupiedHolder;
+        tileHolder.IsOccupied = false;
+        //Sell Tile
+        m_money += tile.GetData.m_cost;
+        //Might cause bugs
+        Destroy(tile.gameObject);
+        //BUG- still in player unit list
+        //Update Board
+        UpdateUnits(x, y, 0, 0, false, true);
     }
 
     [PunRPC]

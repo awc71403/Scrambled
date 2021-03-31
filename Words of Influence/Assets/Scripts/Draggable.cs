@@ -34,6 +34,9 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             if (!thisTile.GetPlayer.GetPhotonView.IsMine) {
                 return;
             }
+            if (GameManager.m_singleton.GetCurrentPhase == GameManager.Phase.FIGHT && thisTile.OccupiedHolder.Y != Board.HandYPosition) {
+                return;
+            }
         }
         m_oldPosition = this.transform.position;
         m_oldSortingOrder = m_spriteRenderer.sortingOrder;
@@ -77,10 +80,16 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                 Tile thisTile = GetComponent<Tile>();
                 if (thisTile != null) {
                     if (holder.IsMine) {
+                        //Check to see if you can put it down or not during certain Phases
+                        if ((GameManager.m_singleton.GetCurrentPhase == GameManager.Phase.FIGHT || GameManager.m_singleton.GetIsBuffer) && (thisTile.OccupiedHolder.Y != Board.HandYPosition || holder.Y != Board.HandYPosition)) {
+                            return false;
+                        }
                         //If it is occupied
                         if (holder.IsOccupied) {
+                            if (holder == thisTile.OccupiedHolder) {
+                                return false;
+                            }
                             //Probably create a Trade function?
-                            Debug.Log("SWAP");
                             PlayerManager.m_localPlayer.SwapTiles(thisTile, holder);
                         }
                         else {
