@@ -27,8 +27,7 @@ public class WordManager : MonoBehaviour
     public static bool IsWord(string word)
     {
         word = word.ToUpper();
-        word += Convert.ToChar(13);
-        Debug.Log($"The word is we are checking is '{word}'");
+        //word += Convert.ToChar(13);
         if (m_wordDictionary.ContainsKey(word)) {
             Debug.Log($"'{word}' is a word!");
             return true;

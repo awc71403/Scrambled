@@ -10,7 +10,9 @@ public class Unit: MonoBehaviour
     private Tile m_firstLetter;
     private int m_unitLength;
 
+    [SerializeField]
     private int m_damage;
+    [SerializeField]
     private int m_maxHealth;
     private int m_currHealth;
 
@@ -34,7 +36,6 @@ public class Unit: MonoBehaviour
     }
 
     public void Setup(Tile[] tiles, bool isHorizontal) {
-        Debug.Log("Unit Setup");
         m_damage = 0;
         m_maxHealth = 0;
         m_token = false;
@@ -52,7 +53,6 @@ public class Unit: MonoBehaviour
         m_unitLength = m_letters.Length;
         m_isHorizontal = isHorizontal;
         if (m_unitLength == 1) {
-            Debug.Log($"{tiles[0].GetName} is a single tile");
             tiles[0].IsSingleTile = true;
         }
         else if (isHorizontal) {
@@ -62,23 +62,32 @@ public class Unit: MonoBehaviour
             tiles[0].IsFirstVertical = true;
         }
 
-        foreach (Tile tile in tiles) {
-            if (isHorizontal) {
-                tile.HorizontalDamage = m_unitLength;
-                tile.HorizontalHealth = m_unitLength;
-                tile.HorizontalUnit = this;
-            }
-            else {
-                tile.VerticalDamage = m_unitLength;
-                tile.VerticalHealth = m_unitLength;
-                tile.VerticalUnit = this;
-            }
+        if (tiles[0].IsSingleTile) {
+            m_damage = tiles[0].GetDamage;
+            m_maxHealth = tiles[0].GetHealth;
+            tiles[0].HorizontalUnit = this;
+        }
+        else {
+            foreach (Tile tile in tiles) {
+                if (isHorizontal) {
+                    //Change later
+                    tile.HorizontalDamage = m_unitLength;
+                    tile.HorizontalHealth = m_unitLength;
+                    tile.HorizontalUnit = this;
+                }
+                else {
+                    //Change later
+                    tile.VerticalDamage = m_unitLength;
+                    tile.VerticalHealth = m_unitLength;
+                    tile.VerticalUnit = this;
+                }
 
-            m_damage += tile.GetDamage + tile.VerticalDamage + tile.HorizontalDamage;
-            m_maxHealth += tile.GetHealth + tile.VerticalHealth + tile.HorizontalHealth;
+                m_damage += tile.GetDamage + tile.VerticalDamage + tile.HorizontalDamage;
+                m_maxHealth += tile.GetHealth + tile.VerticalHealth + tile.HorizontalHealth;
+            }
         }
 
-        m_currHealth = m_maxHealth;
+        ResetHP();
     }
     #endregion
 
@@ -105,6 +114,14 @@ public class Unit: MonoBehaviour
         get { return m_unitLength; }
     }
 
+    public int GetMaxHealth {
+        get { return m_maxHealth; }
+    }
+
+    public int GetCurrentHealth {
+        get { return m_currHealth; }
+    }
+
     public int GetDamage {
         get { return m_damage; }
     }
@@ -129,6 +146,19 @@ public class Unit: MonoBehaviour
             StartCoroutine(DeathAnimation());
             return true;
         }
+    }
+
+    public void ResetHP() {
+        m_currHealth = m_maxHealth;
+    }
+    #endregion
+
+    #region Mouse
+    private void OnMouseOver() {
+        UIManager.m_singleton.UpdateUnit(this);
+    }
+    private void OnMouseExit() {
+        UIManager.m_singleton.CloseUnitUI();
     }
     #endregion
 

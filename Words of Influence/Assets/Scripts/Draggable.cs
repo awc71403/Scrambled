@@ -85,16 +85,21 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                             return false;
                         }
                         //If it is occupied
+                        PlayerManager player = PlayerManager.m_localPlayer;
                         if (holder.IsOccupied) {
                             if (holder == thisTile.OccupiedHolder) {
                                 return false;
                             }
                             //Probably create a Trade function?
-                            PlayerManager.m_localPlayer.SwapTiles(thisTile, holder);
+                            player.SwapTiles(thisTile, holder);
                         }
                         else {
                             //If it is not occupied
-                            PlayerManager.m_localPlayer.MoveTile(thisTile, holder);
+                            //And if we are not capped on tiles in play and the tile isn't coming from the hand to the board
+                            if (player.GetTilesInPlay >= player.GetLevel * PlayerManager.TilesPerLevel && thisTile.OccupiedHolder.Y == Board.HandYPosition && holder.Y != Board.HandYPosition) {
+                                return false;
+                            }
+                            player.MoveTile(thisTile, holder);
                         }
                         return true;
                     }

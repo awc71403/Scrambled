@@ -125,10 +125,10 @@ public class Tile : MonoBehaviour
 
     #region Mouse
     private void OnMouseOver() {
-        Debug.Log("OnMouseOver");
         if (Input.GetKeyDown(KeyCode.E)) {
             if (m_player.GetPhotonView.IsMine) {
                 Debug.Log("Sell called");
+                UIManager.m_singleton.CloseUnitUI();
                 m_player.OnSoldTile(this);
             }
         }
@@ -136,37 +136,72 @@ public class Tile : MonoBehaviour
     #endregion
 
     #region Remove
-    public void RemoveTileUnit(bool isHorizontal) {
+    public void RemoveTileUnits() {
+        Debug.Log("RemoveTileUnits");
         if (m_isSingleTile) {
             m_player.MyUnits.Remove(m_horizontalUnit);
             Destroy(m_horizontalUnit.gameObject);
-            Debug.Log($"Tile {name} called singleTile remove and Horizontal: {isHorizontal}. There is now {m_player.MyUnits.Count} units left.");
-            m_isSingleTile = false;
-            isHorizontal = true;
-        }
-
-        if (isHorizontal) {
-            if (m_isFirstHorizontal && !m_isSingleTile) {
-                //May cause a bug since list always deletes from from to back and we may have multiple copies of the same Unit (especially single letter)?
-                m_isFirstHorizontal = false;
-                m_player.MyUnits.Remove(m_horizontalUnit);
-                Destroy(m_horizontalUnit.gameObject);
-            }
-            m_horizontalDamage = 0;
-            m_horizontalHealth = 0;
             m_horizontalUnit = null;
         }
-        else {
-            if (m_isFirstVertical && !m_isSingleTile) {
-                //May cause a bug since list always deletes from from to back and we may have multiple copies of the same Unit (especially single letter)?
-                m_isFirstVertical = false;
-                m_player.MyUnits.Remove(m_verticalUnit);
-                Destroy(m_verticalUnit.gameObject);
-            }
-            m_verticalDamage = 0;
-            m_verticalHealth = 0;
-            m_verticalUnit = null;
+
+        if (m_isFirstHorizontal && !m_isSingleTile) {
+            m_isFirstHorizontal = false;
+            m_player.MyUnits.Remove(m_horizontalUnit);
+            Destroy(m_horizontalUnit.gameObject);
         }
+        m_horizontalDamage = 0;
+        m_horizontalHealth = 0;
+        m_horizontalUnit = null;
+
+        if (m_isFirstVertical && !m_isSingleTile) {
+            m_isFirstVertical = false;
+            m_player.MyUnits.Remove(m_verticalUnit);
+            Destroy(m_verticalUnit.gameObject);
+        }
+        m_verticalDamage = 0;
+        m_verticalHealth = 0;
+        m_verticalUnit = null;
+
+        m_isSingleTile = false;
+    }
+
+    public void RemoveHorizontalUnit() {
+        Debug.Log("RemoveHorizontalUnit");
+        if (m_isSingleTile) {
+            m_player.MyUnits.Remove(m_horizontalUnit);
+            Destroy(m_horizontalUnit.gameObject);
+        }
+
+        if (m_isFirstHorizontal && !m_isSingleTile) {
+            m_isFirstHorizontal = false;
+            m_player.MyUnits.Remove(m_horizontalUnit);
+            Destroy(m_horizontalUnit.gameObject);
+        }
+        m_horizontalDamage = 0;
+        m_horizontalHealth = 0;
+        m_horizontalUnit = null;
+
+        m_isSingleTile = false;
+    }
+
+    public void RemoveVerticalUnit() {
+        Debug.Log("RemoveVerticalUnit");
+        if (m_isSingleTile) {
+            m_player.MyUnits.Remove(m_horizontalUnit);
+            Destroy(m_horizontalUnit.gameObject);
+            m_horizontalUnit = null;
+        }
+
+        if (m_isFirstVertical && !m_isSingleTile) {
+            m_isFirstVertical = false;
+            m_player.MyUnits.Remove(m_verticalUnit);
+            Destroy(m_verticalUnit.gameObject);
+        }
+        m_verticalDamage = 0;
+        m_verticalHealth = 0;
+        m_verticalUnit = null;
+
+        m_isSingleTile = false;
     }
     #endregion
 }

@@ -19,11 +19,17 @@ public class PlayerManager : MonoBehaviour
     private int m_money;
 
     private int m_level;
+    private int m_currentEXP;
+    [SerializeField]
+    private int[] m_expThreshold;
 
     private int m_winStreak;
     private int m_lossStreak;
 
+    [SerializeField]
     private int m_tilesInHand;
+    [SerializeField]
+    private int m_tilesInPlay;
     private int m_ID;
 
     private int m_opponentID;
@@ -51,6 +57,7 @@ public class PlayerManager : MonoBehaviour
 
     public static PlayerManager m_localPlayer;
 
+    public const int TilesPerLevel = 2;
     public const int StartingHP = 100;
     public const int StartingMoney = 2;
     public const int StartingLevel = 1;
@@ -71,6 +78,7 @@ public class PlayerManager : MonoBehaviour
         m_money = StartingMoney;
 
         m_level = StartingLevel;
+        m_currentEXP = 0;
 
         m_tilesInHand = 0;
 
@@ -89,13 +97,15 @@ public class PlayerManager : MonoBehaviour
             Destroy(m_camera.gameObject);
         }
 
-        m_moneyText = TileShop.m_singleton.GetMoneyText;
-        UpdateMoney();
-
         GameManager.m_singleton.AddPlayer(this);
         CreatePlayerUI();
         CreateBoard();
         SetPlayerManagerLocation();
+
+        m_moneyText = TileShop.m_singleton.GetMoneyText;
+        UpdateMoney();
+
+        UIManager.m_singleton.UpdatePlayerLevel();
 
     }
         
@@ -144,6 +154,14 @@ public class PlayerManager : MonoBehaviour
         get { return m_level; }
     }
 
+    public int GetCurrentExp {
+        get { return m_currentEXP; }
+    }
+
+    public int[] GetExpThreshold {
+        get { return m_expThreshold; }
+    }
+
     public Camera GetCamera {
         get { return m_camera; }
     }
@@ -170,6 +188,9 @@ public class PlayerManager : MonoBehaviour
         get { return m_tilesInHand; }
         set { m_tilesInHand = value; }
     }
+    public int GetTilesInPlay {
+        get { return m_tilesInPlay; }
+    }
 
     public List<Unit> MyUnits {
         get { return m_myUnits; }
@@ -191,6 +212,7 @@ public class PlayerManager : MonoBehaviour
 
     public void OnSoldTile(Tile tile) {
         TileShop.m_singleton.AddToPool(tile.GetData.m_cost, tile.GetData.m_ID);
+        tile.RemoveTileUnits();
         m_PV.RPC("RPC_SellTile", RpcTarget.All, tile.OccupiedHolder.X, tile.OccupiedHolder.Y);
         UpdateMoney();
     }
@@ -232,18 +254,21 @@ public class PlayerManager : MonoBehaviour
                     break;
             }
         }
-        m_money += 5 + bonus;
-        UpdateMoney();
+        AddMoney(TileShop.TurnIncome + bonus);
     }
 
     public void UsedRefresh() {
-        m_PV.RPC("RPC_Refresh", RpcTarget.All);
-        UpdateMoney();
+        m_PV.RPC("RPC_UsedRefresh", RpcTarget.All);
+    }
+
+    public void UsedEXPGain() {
+        m_PV.RPC("RPC_UsedBuyEXP", RpcTarget.All);
     }
     #endregion
 
     #region UI
     private void UpdateMoney() {
+        TileShop.m_singleton.CanButton();
         m_moneyText.text = m_money.ToString();
     }
     #endregion
@@ -252,6 +277,31 @@ public class PlayerManager : MonoBehaviour
     public void TakeDamage(int damage) {
         Debug.Log("TakeDamage called");
         m_PV.RPC("RPC_TakeDamage", RpcTarget.All, damage);
+    }
+
+    public void AddMoney(int amount) {
+        m_money += amount;
+        UpdateMoney();
+    }
+
+    public void UseMoney(int amount) {
+        m_money -= amount;
+        UpdateMoney();
+    }
+
+    public void IncreaseExp(int amount) {
+        Debug.Log("IncreaseExp");
+        if (m_level > m_expThreshold.Length) {
+            return;
+        }
+        m_currentEXP += amount;
+        int threshold = m_expThreshold[m_level - 1];
+        if (m_currentEXP >= threshold) {
+            Debug.Log("Level Up");
+            m_level++;
+            m_currentEXP -= threshold;
+        }
+        UIManager.m_singleton.UpdatePlayerLevel();
     }
     #endregion
 
@@ -332,13 +382,13 @@ public class PlayerManager : MonoBehaviour
                 }
                 if (newStart.X != fromX) {
                     fromLeftH = ScanHorizontal(newStart);
-                    fromLeftHBool = WordCheck(fromLeftH);
+                    fromLeftHBool = WordCheck(fromLeftH, true);
                 }
                 newStart = m_board.GetHolderMapArray[fromX, fromY];
                 newStart = newStart.Right;
                 if (newStart != null && newStart.Tile != null) {
                     fromRightH = ScanHorizontal(newStart);
-                    fromRightHBool = WordCheck(fromRightH);
+                    fromRightHBool = WordCheck(fromRightH, true);
                 }
                 //Vertical
                 newStart = m_board.GetHolderMapArray[fromX, fromY];
@@ -347,13 +397,13 @@ public class PlayerManager : MonoBehaviour
                 }
                 if (newStart.Y != fromY) {
                     fromUpV = ScanVertical(newStart);
-                    fromUpVBool = WordCheck(fromUpV);
+                    fromUpVBool = WordCheck(fromUpV, false);
                 }
                 newStart = m_board.GetHolderMapArray[fromX, fromY];
                 newStart = newStart.Down;
                 if (newStart != null && newStart.Tile != null) {
                     fromDownV = ScanVertical(newStart);
-                    fromDownVBool = WordCheck(fromDownV);
+                    fromDownVBool = WordCheck(fromDownV, false);
                 }
 
                 //Singles
@@ -379,7 +429,7 @@ public class PlayerManager : MonoBehaviour
                 }
 
                 Tile[] fromH = ScanHorizontal(newStart);
-                bool fromHBool = WordCheck(fromH);
+                bool fromHBool = WordCheck(fromH, true);
 
                 //Vertical
                 newStart = m_board.GetHolderMapArray[fromX, fromY];
@@ -388,7 +438,7 @@ public class PlayerManager : MonoBehaviour
                 }
 
                 Tile[] fromV = ScanVertical(newStart);
-                bool fromVBool = WordCheck(fromV);
+                bool fromVBool = WordCheck(fromV, false);
 
                 //Singles
                 if (!fromHBool) {
@@ -399,7 +449,7 @@ public class PlayerManager : MonoBehaviour
                 }
             }
             else {
-                m_board.GetMyHand.GetTileHolders[fromX].Tile.RemoveTileUnit(true);
+                m_board.GetMyHand.GetTileHolders[fromX].Tile.RemoveTileUnits();
             }
             if (targetY != Board.HandYPosition) {
                 //Horizontal
@@ -409,7 +459,7 @@ public class PlayerManager : MonoBehaviour
                 }
 
                 Tile[] targetH = ScanHorizontal(newStart);
-                bool targetHBool = WordCheck(targetH);
+                bool targetHBool = WordCheck(targetH, true);
 
                 //Vertical
                 newStart = m_board.GetHolderMapArray[targetX, targetY];
@@ -418,7 +468,7 @@ public class PlayerManager : MonoBehaviour
                 }
 
                 Tile[] targetV = ScanVertical(newStart);
-                bool targetVBool = WordCheck(targetV);
+                bool targetVBool = WordCheck(targetV, false);
 
                 //Singles
                 if (!targetHBool) {
@@ -429,11 +479,12 @@ public class PlayerManager : MonoBehaviour
                 }
             }
             else {
-                m_board.GetMyHand.GetTileHolders[targetX].Tile.RemoveTileUnit(true);
+                m_board.GetMyHand.GetTileHolders[targetX].Tile.RemoveTileUnits();
             }
         }
         else {
             if (fromY != Board.HandYPosition) {
+                Debug.Log("From Update");
                 Tile[] fromLeftH = null;
                 bool fromLeftHBool = true;
 
@@ -446,37 +497,43 @@ public class PlayerManager : MonoBehaviour
                 Tile[] fromDownV = null;
                 bool fromDownVBool = true;
 
+                //While there are still tiles on the left of where we are from, move left
                 TileHolder newStart = m_board.GetHolderMapArray[fromX, fromY];
                 while (newStart.Left != null && newStart.Left.Tile != null) {
                     newStart = newStart.Left;
                 }
+                //If the furthest left time is not the one we're from
                 if (newStart.X != fromX) {
                     fromLeftH = ScanHorizontal(newStart);
-                    fromLeftHBool = WordCheck(fromLeftH);
+                    fromLeftHBool = WordCheck(fromLeftH, true);
                 }
+                //If there is a tile on the right of where we are from
                 newStart = m_board.GetHolderMapArray[fromX, fromY];
                 newStart = newStart.Right;
                 if (newStart != null && newStart.Tile != null) {
                     fromRightH = ScanHorizontal(newStart);
-                    fromRightHBool = WordCheck(fromRightH);
+                    fromRightHBool = WordCheck(fromRightH, true);
                 }
                 //Vertical
+                //While there are still tiles above where we are from, move up
                 newStart = m_board.GetHolderMapArray[fromX, fromY];
                 while (newStart.Up != null && newStart.Up.Tile != null) {
                     newStart = newStart.Up;
                 }
                 if (newStart.Y != fromY) {
                     fromUpV = ScanVertical(newStart);
-                    fromUpVBool = WordCheck(fromUpV);
+                    fromUpVBool = WordCheck(fromUpV, false);
                 }
+                //If there is a tile below where we are from
                 newStart = m_board.GetHolderMapArray[fromX, fromY];
                 newStart = newStart.Down;
                 if (newStart != null && newStart.Tile != null) {
                     fromDownV = ScanVertical(newStart);
-                    fromDownVBool = WordCheck(fromDownV);
+                    fromDownVBool = WordCheck(fromDownV, false);
                 }
 
                 //Singles
+                Debug.Log("FromSingle");
                 if (fromLeftH != null && !fromLeftHBool) {
                     MakeSingleUnits(fromLeftH);
                 }
@@ -502,7 +559,7 @@ public class PlayerManager : MonoBehaviour
                 }
 
                 Tile[] targetH = ScanHorizontal(newStart);
-                bool targetHBool = WordCheck(targetH);
+                bool targetHBool = WordCheck(targetH, true);
 
                 //Vertical
                 newStart = m_board.GetHolderMapArray[targetX, targetY];
@@ -511,9 +568,10 @@ public class PlayerManager : MonoBehaviour
                 }
 
                 Tile[] targetV = ScanVertical(newStart);
-                bool targetVBool = WordCheck(targetV);
+                bool targetVBool = WordCheck(targetV, false);
 
                 //Singles
+                Debug.Log("TargetSingle");
                 if (!targetHBool) {
                     MakeSingleUnits(targetH);
                 }
@@ -522,7 +580,7 @@ public class PlayerManager : MonoBehaviour
                 }
             }
             else {
-                m_board.GetMyHand.GetTileHolders[targetX].Tile.RemoveTileUnit(true);
+                m_board.GetMyHand.GetTileHolders[targetX].Tile.RemoveTileUnits();
             }
         }
 
@@ -540,7 +598,7 @@ public class PlayerManager : MonoBehaviour
         List<Tile> listTiles = new List<Tile>();
         while (leftMost != null && leftMost.Tile != null) {
             listTiles.Add(leftMost.Tile);
-            leftMost.Tile.RemoveTileUnit(true);
+            leftMost.Tile.RemoveHorizontalUnit();
             leftMost = leftMost.Right;
         }
         string test = "";
@@ -556,7 +614,7 @@ public class PlayerManager : MonoBehaviour
         List<Tile> listTiles = new List<Tile>();
         while (upMost != null && upMost.Tile != null) {
             listTiles.Add(upMost.Tile);
-            upMost.Tile.RemoveTileUnit(false);
+            upMost.Tile.RemoveVerticalUnit();
             upMost = upMost.Down;
         }
         string test = "";
@@ -567,10 +625,10 @@ public class PlayerManager : MonoBehaviour
         return listTiles.ToArray();
     }
 
-    private bool WordCheck(Tile[] tiles) {
+    private bool WordCheck(Tile[] tiles, bool isHorizontal) {
         if (WordManager.IsWord(TileToString(tiles))) {
             Unit newUnit = Instantiate(m_unitPrefab).GetComponent<Unit>();
-            newUnit.Setup(tiles, true);
+            newUnit.Setup(tiles, isHorizontal);
             m_myUnits.Add(newUnit);
             return true;
         }
@@ -579,7 +637,6 @@ public class PlayerManager : MonoBehaviour
 
     private void MakeSingleUnits(Tile[] tiles) {
         foreach (Tile tile in tiles) {
-            Debug.Log($"Try to make Letter {tile.GetName} into single {tile.IsSingleTile}/{tile.HorizontalUnit != null}/{tile.VerticalUnit != null}");
             if (tile.IsSingleTile || tile.HorizontalUnit != null || tile.VerticalUnit != null) {
                 continue;
             }
@@ -647,21 +704,30 @@ public class PlayerManager : MonoBehaviour
 
     #region RPC
     [PunRPC]
-    void RPC_Refresh() {
-        m_money -= 2;
+    void RPC_UsedRefresh() {
+        UseMoney(TileShop.RefreshCost);
+    }
+
+    [PunRPC]
+    void RPC_UsedBuyEXP() {
+        IncreaseExp(TileShop.EXPGain);
+
+        UseMoney(TileShop.EXPCost);
     }
 
     [PunRPC]
     void RPC_TakeDamage(int damage) {
-        Debug.Log("TakeDamage called");
         m_HP -= damage;
         m_playerUIItem.UpdateHP(m_HP);
+        if (m_HP <= 0) {
+            GameManager.m_singleton.PlayerDied(this);
+        }
     }
 
     [PunRPC]
     void RPC_BuyTile(int ID) {
         TileDatabaseSO.TileData tileData = GameManager.m_singleton.m_tileDatabase.allTiles[ID];
-        m_money -= tileData.m_cost;
+        UseMoney(tileData.m_cost);
         Tile newTile = Instantiate(tileData.m_tilePrefab);
         newTile.Setup(tileData, this);
         m_board.GetMyHand.Add(newTile);
@@ -673,19 +739,18 @@ public class PlayerManager : MonoBehaviour
         Tile tile;
         if (y != Board.HandYPosition) {
             tile = m_board.GetHolderMapArray[x, y].Tile;
+            m_tilesInPlay--;
         }
         else {
             tile = m_board.GetMyHand.GetTileHolders[x].Tile;
             m_tilesInHand--;
         }
-        Debug.Log(tile);
         TileHolder tileHolder = tile.OccupiedHolder;
         tileHolder.IsOccupied = false;
         //Sell Tile
-        m_money += tile.GetData.m_cost;
+        AddMoney(tile.GetData.m_cost);
         //Might cause bugs
         Destroy(tile.gameObject);
-        //BUG- still in player unit list
         //Update Board
         UpdateUnits(x, y, 0, 0, false, true);
     }
@@ -697,6 +762,9 @@ public class PlayerManager : MonoBehaviour
             chosenTile = m_board.GetHolderMapArray[tileX, tileY].Tile;
         }
         else {
+            if (targetY != Board.HandYPosition) {
+                m_tilesInPlay++;
+            }
             chosenTile = m_board.GetMyHand.GetTileHolders[tileX].Tile;
             m_board.GetMyHand.GetTileHolders[tileX].IsOccupied = false;
             m_tilesInHand--;
@@ -708,8 +776,8 @@ public class PlayerManager : MonoBehaviour
         }
         else {
             targetHolder = m_board.GetMyHand.GetTileHolders[targetX];
+            m_tilesInHand++;
         }
-
 
         targetHolder.Tile = chosenTile;
         targetHolder.IsOccupied = true;

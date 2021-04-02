@@ -52,9 +52,11 @@ public class GameManager : MonoBehaviourPunCallbacks {
     private int m_readyToProceed;
 
     // 30 but testing 10
-    public const float m_bufferTime = 5;
-    public const float m_buyTime = 10;
+    public const float BufferTime = 2;
+    public const float BuyTime = 30;
+    public const float FightTime = 30;
     public const int StartRepetition = 4;
+    public const int ExpPerRound = 2;
     #endregion
 
     #region Enum
@@ -95,14 +97,6 @@ public class GameManager : MonoBehaviourPunCallbacks {
 
     #region Update
     private void Update() {
-        if (m_currentPhase == Phase.FIGHT && !m_isBuffer) {
-            return;
-        }
-        //Test
-        if (m_currentPhase == Phase.BUY && !m_isBuffer) {
-            return;
-        }
-        //End Test
         if (m_currentTimer > 0) {
             m_currentTimer -= Time.deltaTime;
             UpdateTimerUI();
@@ -112,7 +106,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
             SwapPhase();
         }
         else {
-            PlayerReadyToProceed();
+            //PlayerReadyToProceed();
         }
     }
     #endregion
@@ -172,9 +166,9 @@ public class GameManager : MonoBehaviourPunCallbacks {
         Debug.Log(m_aliveList.Count);
         foreach (PlayerManager player in m_aliveList) {
             player.Income();
-            //Refresh shop
-            TileShop.m_singleton.TurnRefresh();
+            player.IncreaseExp(ExpPerRound);
         }
+        TileShop.m_singleton.TurnRefresh();
     }
 
     private void CheckLastPlayer() {
@@ -208,7 +202,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
     }
 
     private void UpdateTimerUI() {
-        m_timerSlider.value = m_currentTimer / m_buyTime;
+        m_timerSlider.value = m_currentTimer / BuyTime;
         string phase;
         if (m_currentPhase == Phase.BUY) {
             phase = "BUY: ";
@@ -509,7 +503,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
     #region Phase
     private void InitializePhase() {
         m_currentPhase = Phase.BUY;
-        m_currentTimer = m_buyTime;
+        m_currentTimer = BuyTime;
     }
 
     private void SwapPhase() {
@@ -520,8 +514,9 @@ public class GameManager : MonoBehaviourPunCallbacks {
             BattleManager.m_singleton.SetUpBattle(PlayerManager.m_localPlayer, m_playerList[PlayerManager.m_localPlayer.OpponentID]);
         }
         else {
+            NextTurn();
             m_currentPhase = Phase.BUY;
-            m_currentTimer = m_buyTime;
+            m_currentTimer = BuyTime;
         }
     }
 
@@ -547,7 +542,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
     [PunRPC]
     void RPC_BufferNextPhase() {
         m_isBuffer = true;
-        m_currentTimer = m_bufferTime;
+        m_currentTimer = BufferTime;
     }
     #endregion
 

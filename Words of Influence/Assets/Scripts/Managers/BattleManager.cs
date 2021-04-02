@@ -5,8 +5,10 @@ using UnityEngine;
 public class BattleManager : MonoBehaviour
 {
     #region Variables
-    private int myIndex;
-    private int enemyIndex;
+    private int m_myIndex;
+    private int m_enemyIndex;
+
+    private bool m_timerFinished;
 
     private PlayerManager m_myPlayer;
     private PlayerManager m_enemyPlayer;
@@ -35,11 +37,13 @@ public class BattleManager : MonoBehaviour
 
     #region Battle
     public void SetUpBattle(PlayerManager me, PlayerManager enemy) {
-        myIndex = 0;
-        enemyIndex = 0;
+        m_myIndex = 0;
+        m_enemyIndex = 0;
 
         m_myPlayer = me;
         m_enemyPlayer = enemy;
+
+        m_timerFinished = false;
 
         m_enemyTileVisual = new List<Tile>();
 
@@ -66,9 +70,11 @@ public class BattleManager : MonoBehaviour
     private void ResetVisual() {
         foreach (Unit unit in m_myPlayer.MyUnits) {
             unit.gameObject.SetActive(true);
+            unit.ResetHP();
         }
         foreach (Unit unit in m_enemyPlayer.MyUnits) {
             unit.gameObject.SetActive(true);
+            unit.ResetHP();
         }
         ClearEnemyVisual();
     }
@@ -78,6 +84,10 @@ public class BattleManager : MonoBehaviour
         foreach (Tile tile in m_enemyTileVisual) {
             Destroy(tile.gameObject);
         }
+    }
+
+    public void TimerFinished() {
+        m_timerFinished = true;
     }
     #endregion
 
@@ -139,6 +149,10 @@ public class BattleManager : MonoBehaviour
         }
         else {
             int random = Random.Range(0, 2);
+            //Done for syncing reasons
+            if (m_myPlayer.ID > m_enemyPlayer.ID) {
+                random = 1 - random;
+            }
             if (random == 0) {
                 StartCoroutine(MyCombat());
             }
@@ -151,14 +165,23 @@ public class BattleManager : MonoBehaviour
     IEnumerator MyCombat() {
         //Attack
         Debug.Log("MyCombat called");
-        Unit myUnit = m_myUnits[myIndex];
+        Unit myUnit = m_myUnits[m_myIndex];
         Unit enemyUnit = m_enemyUnits[0];
         Fight(myUnit, enemyUnit);
         yield return new WaitForSeconds(1f);
-        myIndex++;
-        if (myIndex >= m_myUnits.Count) {
-            myIndex = 0;
+        m_myIndex++;
+        if (m_myIndex >= m_myUnits.Count) {
+            m_myIndex = 0;
         }
+
+        if (m_timerFinished) {
+            m_myPlayer.TakeDamage(10);
+            m_enemyPlayer.TakeDamage(10);
+            GameManager.m_singleton.PlayerReadyToProceed();
+            ResetVisual();
+            yield break;
+        }
+
         if (m_myUnits.Count == 0) {
             if (m_enemyUnits.Count == 0) {
                 //Both Players don't take damage
@@ -187,13 +210,22 @@ public class BattleManager : MonoBehaviour
         //Attack
         Debug.Log("EnemyCombat called");
         Unit myUnit = m_myUnits[0];
-        Unit enemyUnit = m_enemyUnits[enemyIndex];
+        Unit enemyUnit = m_enemyUnits[m_enemyIndex];
         Fight(myUnit, enemyUnit);
         yield return new WaitForSeconds(1f);
-        enemyIndex++;
-        if (enemyIndex >= m_enemyUnits.Count) {
-            enemyIndex = 0;
+        m_enemyIndex++;
+        if (m_enemyIndex >= m_enemyUnits.Count) {
+            m_enemyIndex = 0;
         }
+
+        if (m_timerFinished) {
+            m_myPlayer.TakeDamage(10);
+            m_enemyPlayer.TakeDamage(10);
+            GameManager.m_singleton.PlayerReadyToProceed();
+            ResetVisual();
+            yield break;
+        }
+
         if (m_myUnits.Count == 0) {
             if (m_enemyUnits.Count == 0) {
                 //Both Players don't take damage

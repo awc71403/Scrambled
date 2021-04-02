@@ -41,6 +41,7 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     private const int MaxRandomMatchmaking = 100000;
     private const int FullRoomInt = 8;
+    private const string Version = "0.1";
     private const string PlayerPrefsNameKey = "PlayerName";
     public const string PlayerID = "PlayerID";
     public const string RandomSeedKey = "RandomSeed";
@@ -207,7 +208,10 @@ public class Launcher : MonoBehaviourPunCallbacks
 
         MenuManager.m_singleton.OpenMenu("loading");
 
+        PhotonNetwork.PhotonServerSettings.AppSettings.AppVersion = Version;
+        PhotonNetwork.GameVersion = "0.1";
         PhotonNetwork.ConnectUsingSettings();
+        PhotonNetwork.GameVersion = Version;
     }
     #endregion
 

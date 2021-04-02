@@ -41,6 +41,10 @@ public class TileShop : MonoBehaviour
     [SerializeField]
     private PoolRate[] m_poolRates;
 
+    public const int TurnIncome = 5;
+    public const int RefreshCost = 2;
+    public const int EXPCost = 4;
+    public const int EXPGain = 4;
     private const int onePoolSize = 60;
     private const int twoPoolSize = 40;
     private const int threePoolSize = 40;
@@ -111,7 +115,6 @@ public class TileShop : MonoBehaviour
                     }
                     break;
                 case 5:
-
                     for (int i = 0; i < fivePoolSize; i++) {
                         fivePool.Add(tile.m_ID);
                     }
@@ -182,7 +185,13 @@ public class TileShop : MonoBehaviour
         PlayerManager.m_localPlayer.OnBoughtTile(cardData);
     }
 
-    public void CanRefresh() {
+    public void CanButton() {
+        if (PlayerManager.m_localPlayer.GetMoney < 4) {
+            m_expButton.interactable = false;
+        }
+        else {
+            m_expButton.interactable = true;
+        }
         if (PlayerManager.m_localPlayer.GetMoney < 2) {
             m_refreshButton.interactable = false;
         }
@@ -202,6 +211,10 @@ public class TileShop : MonoBehaviour
     public void Refresh() {
         PlayerManager.m_localPlayer.UsedRefresh();
         RegenerateTiles();
+    }
+
+    public void BuyEXP() {
+        PlayerManager.m_localPlayer.UsedEXPGain();
     }
     #endregion
 
