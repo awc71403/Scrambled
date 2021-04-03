@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
     private int m_readyToProceed;
 
     // 30 but testing 10
-    public const float BufferTime = 2;
+    public const float BufferTime = 4;
     public const float BuyTime = 30;
     public const float FightTime = 30;
     public const int StartRepetition = 4;
@@ -189,7 +189,6 @@ public class GameManager : MonoBehaviourPunCallbacks {
 
     #region UI
     public void OpenWinMenu(string playerName) {
-        Debug.Log(playerName);
         m_modalWindow.descriptionText = $"{playerName} wins!";
         m_modalWindow.UpdateUI();
         m_modalWindow.OpenWindow();
@@ -372,6 +371,10 @@ public class GameManager : MonoBehaviourPunCallbacks {
             }
         }
         else if (alive == 4) {
+            if (m_roundRobin == null) {
+                UpdateMatchmakeSystem();
+            }
+
             if (m_currentRobin.Count == 0) {
                 m_currentRobin = new List<int>(m_roundRobin);
             }
@@ -399,6 +402,9 @@ public class GameManager : MonoBehaviourPunCallbacks {
         }
         else if (alive == 3) {
             Debug.Log("Calling Alive = 3");
+            if (m_roundRobin == null) {
+                UpdateMatchmakeSystem();
+            }
             List<int> players = new List<int>(m_roundRobin);
             int chosenGhost = PlayerManager.GhostID;
             if (m_currentRobin.Count == 0) {
@@ -511,6 +517,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
             m_currentPhase = Phase.FIGHT;
             //For Testing
             Matchmake();
+            //DOESNT ACCOUNT GHOST
             BattleManager.m_singleton.SetUpBattle(PlayerManager.m_localPlayer, m_playerList[PlayerManager.m_localPlayer.OpponentID]);
         }
         else {

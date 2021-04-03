@@ -97,10 +97,10 @@ public class PlayerManager : MonoBehaviour
             Destroy(m_camera.gameObject);
         }
 
-        GameManager.m_singleton.AddPlayer(this);
         CreatePlayerUI();
         CreateBoard();
-        SetPlayerManagerLocation();
+
+        GameManager.m_singleton.AddPlayer(this);
 
         m_moneyText = TileShop.m_singleton.GetMoneyText;
         UpdateMoney();
@@ -118,16 +118,16 @@ public class PlayerManager : MonoBehaviour
     }
 
     private void CreateBoard() {
-        Debug.Log("CreateBoard called");
         Player[] players = PhotonNetwork.PlayerList;
         for (int i = 0; i < players.Length; i++) {
-            if (players[i].UserId == m_PV.Owner.UserId && m_board == null) {
+            if (players[i].ActorNumber == m_PV.Owner.ActorNumber && m_board == null) {
                 m_ID = i;
                 m_board = Instantiate(m_boardPrefab);
                 m_board.Setup(this);
-                m_board.transform.position = SpawnManager.m_singleton.GetBoardSpawnPoint(i).transform.position;
+                m_board.transform.position = SpawnManager.m_singleton.GetBoardSpawnPoint(m_ID).transform.position;
             }
         }
+        SetPlayerManagerLocation();
     }
 
     private void SetPlayerManagerLocation() {
@@ -680,23 +680,23 @@ public class PlayerManager : MonoBehaviour
             }
         }
         //Reorganize Firewall
-        for (int i = orderedUnits.Count - 1; i >= 0; i--) {
-            Unit unit = orderedUnits[i];
-            TileDatabaseSO.TileData.Trait[] traits = unit.GetTraits;
-            if (traits[0] == TileDatabaseSO.TileData.Trait.FIREWALL || traits[1] == TileDatabaseSO.TileData.Trait.FIREWALL || traits[2] == TileDatabaseSO.TileData.Trait.FIREWALL) {
-                orderedUnits.RemoveAt(i);
-                orderedUnits.Insert(0, unit);
-            }
-        }
+        //for (int i = orderedUnits.Count - 1; i >= 0; i--) {
+        //    Unit unit = orderedUnits[i];
+        //    TileDatabaseSO.TileData.Trait[] traits = unit.GetTraits;
+        //    if (traits[0] == TileDatabaseSO.TileData.Trait.FIREWALL || traits[1] == TileDatabaseSO.TileData.Trait.FIREWALL || traits[2] == TileDatabaseSO.TileData.Trait.FIREWALL) {
+        //        orderedUnits.RemoveAt(i);
+        //        orderedUnits.Insert(0, unit);
+        //    }
+        //}
         //Reorganize Blacklist
-        for (int i = 0; i < orderedUnits.Count; i++) {
-            Unit unit = orderedUnits[i];
-            TileDatabaseSO.TileData.Trait[] traits = unit.GetTraits;
-            if (traits[0] == TileDatabaseSO.TileData.Trait.BLACKLIST || traits[1] == TileDatabaseSO.TileData.Trait.BLACKLIST || traits[2] == TileDatabaseSO.TileData.Trait.BLACKLIST) {
-                orderedUnits.RemoveAt(i);
-                orderedUnits.Add(unit);
-            }
-        }
+        //for (int i = 0; i < orderedUnits.Count; i++) {
+        //    Unit unit = orderedUnits[i];
+        //    TileDatabaseSO.TileData.Trait[] traits = unit.GetTraits;
+        //    if (traits[0] == TileDatabaseSO.TileData.Trait.BLACKLIST || traits[1] == TileDatabaseSO.TileData.Trait.BLACKLIST || traits[2] == TileDatabaseSO.TileData.Trait.BLACKLIST) {
+        //        orderedUnits.RemoveAt(i);
+        //        orderedUnits.Add(unit);
+        //    }
+        //}
 
         return orderedUnits;
     }
@@ -747,6 +747,7 @@ public class PlayerManager : MonoBehaviour
         }
         TileHolder tileHolder = tile.OccupiedHolder;
         tileHolder.IsOccupied = false;
+        tileHolder.Tile = null;
         //Sell Tile
         AddMoney(tile.GetData.m_cost);
         //Might cause bugs

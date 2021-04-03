@@ -175,6 +175,10 @@ public class TestManager : MonoBehaviour
             }
         }
         else if (alive == 4) {
+            if (m_roundRobin == null) {
+                UpdateMatchmakeSystem();
+            }
+
             if (m_currentRobin.Count == 0) {
                 m_currentRobin = new List<int>(m_roundRobin);
             }
@@ -201,6 +205,9 @@ public class TestManager : MonoBehaviour
 
         }
         else if (alive == 3) {
+            if (m_roundRobin == null) {
+                UpdateMatchmakeSystem();
+            }
             Debug.Log("Calling Alive = 3");
             List<int> players = new List<int>(m_roundRobin);
             int chosenGhost = PlayerManager.GhostID;

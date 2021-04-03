@@ -31,7 +31,6 @@ public class BuyTile : MonoBehaviour
     }
 
     public void Setup(TileDatabaseSO.TileData myData, TileShop shopRef) {
-        Debug.Log("BuyTile Setup");
         m_health = myData.m_health;
         m_attack = myData.m_attack;
         m_cost = myData.m_cost;

@@ -168,7 +168,7 @@ public class TileShop : MonoBehaviour
         List<int> pool = m_poolDictionary[chosenCost];
         random = Random.Range(0, pool.Count);
         int chosen = pool[random];
-        RemoveFromPool(chosenCost, random);
+        RemoveFromPool(chosenCost, chosen);
         return chosen;
     }
 
@@ -176,8 +176,7 @@ public class TileShop : MonoBehaviour
         m_PV.RPC("RPC_RemoveFromPool", RpcTarget.All, pool, location);
     }
 
-    public void AddToPool(int pool, int ID) {
-        Debug.Log($"AddToPool: Pool {pool} and ID {ID}");
+    public void AddToPool(int pool, int ID) {   
         m_PV.RPC("RPC_AddToPool", RpcTarget.All, pool, ID);
     }
 
@@ -220,8 +219,8 @@ public class TileShop : MonoBehaviour
 
     #region RPC
     [PunRPC]
-    void RPC_RemoveFromPool(int pool, int location) {
-        m_poolDictionary[pool].RemoveAt(location);
+    void RPC_RemoveFromPool(int pool, int ID) {
+        m_poolDictionary[pool].Remove(ID);
     }
 
     [PunRPC]

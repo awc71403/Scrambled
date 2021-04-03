@@ -43,6 +43,8 @@ public class BattleManager : MonoBehaviour
         m_myPlayer = me;
         m_enemyPlayer = enemy;
 
+        Debug.LogError($"I, Player {me.ID}, am against Player {enemy.ID}");
+
         m_timerFinished = false;
 
         m_enemyTileVisual = new List<Tile>();
@@ -53,15 +55,18 @@ public class BattleManager : MonoBehaviour
         //m_enemyUnits = enemy.OrderUnits();
 
         StartCoroutine(SetUpVisual());
+
+
     }
 
     private void Fight(Unit myUnit, Unit enemyUnit) {
         int myDamage = myUnit.GetDamage;
         int enemyDamage = enemyUnit.GetDamage;
-        if (myUnit.TakeDamage(myDamage)) {
+        Debug.LogError($"myUnit: {myUnit.GetCurrentHealth}/{myDamage} enemyUnit: {enemyUnit.GetCurrentHealth}/{enemyDamage}");
+        if (myUnit.TakeDamage(enemyDamage)) {
             m_myUnits.Remove(myUnit);
         }
-        if (enemyUnit.TakeDamage(enemyDamage)) {
+        if (enemyUnit.TakeDamage(myDamage)) {
             m_enemyUnits.Remove(enemyUnit);
         }
         //Might mess around with the index that needs to be changed/added
@@ -121,24 +126,28 @@ public class BattleManager : MonoBehaviour
             }
         }
 
+        foreach (Unit unit in m_enemyUnits) {
+            unit.ResetHP();
+        }
+
         //Reorganize Firewall
-        for (int i = m_enemyUnits.Count - 1; i >= 0; i--) {
-            Unit unit = m_enemyUnits[i];
-            TileDatabaseSO.TileData.Trait[] traits = unit.GetTraits;
-            if (traits[0] == TileDatabaseSO.TileData.Trait.FIREWALL || traits[1] == TileDatabaseSO.TileData.Trait.FIREWALL || traits[2] == TileDatabaseSO.TileData.Trait.FIREWALL) {
-                m_enemyUnits.RemoveAt(i);
-                m_enemyUnits.Insert(0, unit);
-            }
-        }
+        //for (int i = m_enemyUnits.Count - 1; i >= 0; i--) {
+        //    Unit unit = m_enemyUnits[i];
+        //    TileDatabaseSO.TileData.Trait[] traits = unit.GetTraits;
+        //    if (traits[0] == TileDatabaseSO.TileData.Trait.FIREWALL || traits[1] == TileDatabaseSO.TileData.Trait.FIREWALL || traits[2] == TileDatabaseSO.TileData.Trait.FIREWALL) {
+        //        m_enemyUnits.RemoveAt(i);
+        //        m_enemyUnits.Insert(0, unit);
+        //    }
+        //}
         //Reorganize Blacklist
-        for (int i = 0; i < m_enemyUnits.Count; i++) {
-            Unit unit = m_enemyUnits[i];
-            TileDatabaseSO.TileData.Trait[] traits = unit.GetTraits;
-            if (traits[0] == TileDatabaseSO.TileData.Trait.BLACKLIST || traits[1] == TileDatabaseSO.TileData.Trait.BLACKLIST || traits[2] == TileDatabaseSO.TileData.Trait.BLACKLIST) {
-                m_enemyUnits.RemoveAt(i);
-                m_enemyUnits.Add(unit);
-            }
-        }
+        //for (int i = 0; i < m_enemyUnits.Count; i++) {
+        //    Unit unit = m_enemyUnits[i];
+        //    TileDatabaseSO.TileData.Trait[] traits = unit.GetTraits;
+        //    if (traits[0] == TileDatabaseSO.TileData.Trait.BLACKLIST || traits[1] == TileDatabaseSO.TileData.Trait.BLACKLIST || traits[2] == TileDatabaseSO.TileData.Trait.BLACKLIST) {
+        //        m_enemyUnits.RemoveAt(i);
+        //        m_enemyUnits.Add(unit);
+        //    }
+        //}
 
         yield return new WaitForSeconds(1f);
         if (m_myUnits.Count > m_enemyUnits.Count) {
@@ -185,19 +194,19 @@ public class BattleManager : MonoBehaviour
         if (m_myUnits.Count == 0) {
             if (m_enemyUnits.Count == 0) {
                 //Both Players don't take damage
-                Debug.Log("Exit: Tie");
+                Debug.LogError("Exit: Tie");
                 GameManager.m_singleton.PlayerReadyToProceed();
                 ResetVisual();
             }
             else {
-                Debug.Log("Exit: I lost");
+                Debug.LogError("Exit: I lost");
                 m_myPlayer.TakeDamage(10);
                 GameManager.m_singleton.PlayerReadyToProceed();
                 ResetVisual();
             }
         }
         else if (m_enemyUnits.Count == 0) {
-            Debug.Log("Exit: I won");
+            Debug.LogError("Exit: I won");
             GameManager.m_singleton.PlayerReadyToProceed();
             ResetVisual();
         }
