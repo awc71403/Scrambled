@@ -45,6 +45,8 @@ public class PlayerManager : MonoBehaviour
     [SerializeField]
     private Unit m_unitPrefab;
     [SerializeField]
+    private Unit m_singlePrefab;
+    [SerializeField]
     private List<Unit> m_myUnits;
 
     [SerializeField]
@@ -647,7 +649,7 @@ public class PlayerManager : MonoBehaviour
             }
             Tile[] array = new Tile[1];
             array[0] = tile;
-            Unit newUnit = Instantiate(m_unitPrefab).GetComponent<Unit>();
+            Unit newUnit = Instantiate(m_singlePrefab).GetComponent<Unit>();
             newUnit.Setup(array, true);
             m_myUnits.Add(newUnit);
             Debug.Log($"Tile {tile.GetName} turned into a Unit");
