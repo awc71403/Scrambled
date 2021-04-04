@@ -1,3 +1,3 @@
-# Words-of-Influence
+# Scrambled
 
 Currently working on this in hopes of making a Scrabble x Auto-Chess type of game.
