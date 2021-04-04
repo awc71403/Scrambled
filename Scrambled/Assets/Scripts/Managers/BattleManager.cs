@@ -43,7 +43,7 @@ public class BattleManager : MonoBehaviour
         m_myPlayer = me;
         m_enemyPlayer = enemy;
 
-        Debug.LogError($"I, Player {me.ID}, am against Player {enemy.ID}");
+        Debug.LogError($"I, Player {me.GetPhotonView.Owner.NickName}, am against Player {enemy.GetPhotonView.Owner.NickName}");
 
         m_timerFinished = false;
 
@@ -188,6 +188,7 @@ public class BattleManager : MonoBehaviour
             m_enemyPlayer.TakeDamage(10);
             GameManager.m_singleton.PlayerReadyToProceed();
             ResetVisual();
+            Debug.LogError("Exit: Timer finished");
             yield break;
         }
 
@@ -232,25 +233,26 @@ public class BattleManager : MonoBehaviour
             m_enemyPlayer.TakeDamage(10);
             GameManager.m_singleton.PlayerReadyToProceed();
             ResetVisual();
+            Debug.LogError("Exit: Timer finished");
             yield break;
         }
 
         if (m_myUnits.Count == 0) {
             if (m_enemyUnits.Count == 0) {
                 //Both Players don't take damage
-                Debug.Log("Exit: Tie");
+                Debug.LogError("Exit: Tie");
                 GameManager.m_singleton.PlayerReadyToProceed();
                 ResetVisual();
             }
             else {
-                Debug.Log("Exit: I lost");
+                Debug.LogError("Exit: I lost");
                 m_myPlayer.TakeDamage(10);
                 GameManager.m_singleton.PlayerReadyToProceed();
                 ResetVisual();
             }
         }
         else if (m_enemyUnits.Count == 0) {
-            Debug.Log("Exit: I won");
+            Debug.LogError("Exit: I won");
             GameManager.m_singleton.PlayerReadyToProceed();
             ResetVisual();
         }

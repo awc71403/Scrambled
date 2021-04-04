@@ -23,6 +23,9 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Slider m_expBar;
 
+    [SerializeField]
+    private TextMeshProUGUI m_unitsText;
+
     #endregion
 
     #region Initialization
@@ -59,6 +62,12 @@ public class UIManager : MonoBehaviour
 
     public void CloseUnitUI() {
         m_unitUI.gameObject.SetActive(false);
+    }
+    #endregion
+
+    #region Tiles
+    public void UpdateTiles(int tilesInPlay) {
+        m_unitsText.text = $"Tiles: {tilesInPlay}/{PlayerManager.m_localPlayer.GetLevel * PlayerManager.TilesPerLevel}";
     }
     #endregion
 }

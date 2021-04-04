@@ -236,7 +236,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
                 if (chosenEnemyID[player.ID] == PlayerManager.NoOpponent) {
                     List<PlayerManager> possibleOpponents = new List<PlayerManager>(m_aliveList);
                     int playerIndices = possibleOpponents.Count;
-                    int playerAgainstGhost = PlayerManager.GhostID;
+                    int playerAgainstGhost = PlayerManager.DefaultGhost;
                     int chosenGhost;
                     int random;
                     bool odd;
@@ -262,7 +262,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
                             random = Random.Range(0, playerIndices + 1);
                         }
                         //If you pick the ghost
-                        if (random == playerIndices && !player.GetOpponentTracker.Contains(PlayerManager.GhostID)) {
+                        if (random == playerIndices && !player.GetOpponentTracker.Contains(PlayerManager.DefaultGhost)) {
                             //GHOST
                             //Add another while loop incase you picked yourself
                             int opponentID = Random.Range(0, playerIndices - 1);
@@ -274,7 +274,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
                             }
                             playerAgainstGhost = player.ID;
                             chosenGhost = opponentID;
-                            chosenEnemyID[player.ID] = PlayerManager.GhostID;
+                            chosenEnemyID[player.ID] = PlayerManager.DefaultGhost;
                             m_ghostMatched = true;
                             found = true;
                             Debug.Log($"Player {player.ID} matched with the Ghost of Player {possibleOpponents[opponentID].ID}.");
@@ -307,19 +307,19 @@ public class GameManager : MonoBehaviourPunCallbacks {
                             else {
                                 random = Random.Range(0, playerIndices + 1);
                             }
-                            if (random == playerIndices && !fix.GetOpponentTracker.Contains(PlayerManager.GhostID)) {
+                            if (random == playerIndices && !fix.GetOpponentTracker.Contains(PlayerManager.DefaultGhost)) {
                                 int opponentID = Random.Range(0, playerIndices - 1);
                                 if (fix.ID == opponentID) {
                                     possibleOpponents.RemoveAt(opponentID);
                                     playerIndices--;
                                     opponentID = Random.Range(0, playerIndices - 1);
                                 }
-                                chosenEnemyID[fix.ID] = PlayerManager.GhostID;
+                                chosenEnemyID[fix.ID] = PlayerManager.DefaultGhost;
                                 chosenGhost = opponentID;
                                 int nextFix = playerAgainstGhost;
                                 playerAgainstGhost = fix.ID;
 
-                                if (nextFix == PlayerManager.GhostID) {
+                                if (nextFix == PlayerManager.DefaultGhost) {
                                     break;
                                 }
 
@@ -344,7 +344,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
                                     break;
                                 }
 
-                                if (nextFix == PlayerManager.GhostID) {
+                                if (nextFix == PlayerManager.DefaultGhost) {
                                     nextFix = playerAgainstGhost;
 
                                     chosenGhost = possibleOpponents[random].ID;
@@ -355,7 +355,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
                                 playerIndices = possibleOpponents.Count;
 
                                 Debug.Log($"NextFix: {nextFix}");
-                                if (nextFix == PlayerManager.GhostID) {
+                                if (nextFix == PlayerManager.DefaultGhost) {
                                     break;
                                 }
 
@@ -406,7 +406,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
                 UpdateMatchmakeSystem();
             }
             List<int> players = new List<int>(m_roundRobin);
-            int chosenGhost = PlayerManager.GhostID;
+            int chosenGhost = PlayerManager.DefaultGhost;
             if (m_currentRobin.Count == 0) {
                 m_currentRobin = new List<int>(m_roundRobin);
             }
@@ -420,7 +420,8 @@ public class GameManager : MonoBehaviourPunCallbacks {
                     random = Random.Range(0, players.Count);
                 }
                 chosenGhost = random;
-                chosenEnemyID[m_aliveList[0].ID] = PlayerManager.GhostID;
+                chosenEnemyID[m_aliveList[0].ID] = PlayerManager.DefaultGhost;
+                m_aliveList[0].GhostID = chosenGhost;
 
                 chosenEnemyID[m_aliveList[1].ID] = m_aliveList[2].ID;
                 chosenEnemyID[m_aliveList[2].ID] = m_aliveList[1].ID;
@@ -438,7 +439,8 @@ public class GameManager : MonoBehaviourPunCallbacks {
                             random = Random.Range(0, players.Count);
                         }
                         chosenGhost = random;
-                        chosenEnemyID[m_aliveList[i].ID] = PlayerManager.GhostID;
+                        chosenEnemyID[m_aliveList[i].ID] = PlayerManager.DefaultGhost;
+                        m_aliveList[i].GhostID = chosenGhost;
                     }
                 }
             }
@@ -452,7 +454,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
         for (int i = 0; i < chosenEnemyID.Length; i++) {
             if (chosenEnemyID[i] != PlayerManager.NoOpponent) {
                 m_playerList[i].SetOpponent(chosenEnemyID[i]);
-                Debug.Log($"Player {m_playerList[i].ID}'s TRUE opponent is Player {m_playerList[i].OpponentID}.");
+                Debug.Log($"Player {m_playerList[i].GetPhotonView.Owner.NickName}'s TRUE opponent is Player {m_playerList[i].GetPhotonView.Owner.NickName}.");
             }
         }
 
@@ -518,7 +520,11 @@ public class GameManager : MonoBehaviourPunCallbacks {
             //For Testing
             Matchmake();
             //DOESNT ACCOUNT GHOST
-            BattleManager.m_singleton.SetUpBattle(PlayerManager.m_localPlayer, m_playerList[PlayerManager.m_localPlayer.OpponentID]);
+            int versus = PlayerManager.m_localPlayer.OpponentID;
+            if (versus == PlayerManager.DefaultGhost) {
+                versus = PlayerManager.m_localPlayer.GhostID;
+            }
+            BattleManager.m_singleton.SetUpBattle(PlayerManager.m_localPlayer, m_playerList[versus]);
         }
         else {
             NextTurn();

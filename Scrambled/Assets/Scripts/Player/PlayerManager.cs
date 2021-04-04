@@ -62,7 +62,7 @@ public class PlayerManager : MonoBehaviour
     public const int StartingMoney = 2;
     public const int StartingLevel = 1;
     public const int NoOpponent = -1;
-    public const int GhostID = -2;
+    public const int DefaultGhost = -2;
     public const int StartRepetition = 4;
     #endregion
 
@@ -81,6 +81,7 @@ public class PlayerManager : MonoBehaviour
         m_currentEXP = 0;
 
         m_tilesInHand = 0;
+        m_tilesInPlay = 0;
 
         m_opponentID = NoOpponent;
 
@@ -89,6 +90,7 @@ public class PlayerManager : MonoBehaviour
 
         if (m_PV.IsMine) {
             m_localPlayer = this;
+            UIManager.m_singleton.UpdateTiles(m_tilesInPlay);
         }
     }
 
@@ -170,8 +172,9 @@ public class PlayerManager : MonoBehaviour
         get { return m_board; }
     }
 
-    public int GetGhostID {
+    public int GhostID {
         get { return m_ghostID; }
+        set { m_ghostID = value; }
     }
 
     public int ID {
@@ -214,6 +217,7 @@ public class PlayerManager : MonoBehaviour
         TileShop.m_singleton.AddToPool(tile.GetData.m_cost, tile.GetData.m_ID);
         tile.RemoveTileUnits();
         m_PV.RPC("RPC_SellTile", RpcTarget.All, tile.OccupiedHolder.X, tile.OccupiedHolder.Y);
+        UIManager.m_singleton.UpdateTiles(m_tilesInPlay);
         UpdateMoney();
     }
 
@@ -310,7 +314,7 @@ public class PlayerManager : MonoBehaviour
 
     public void SetGhostOpponent(int opponentID) {
         m_ghostID = opponentID;
-        m_opponentID = GhostID;
+        m_opponentID = DefaultGhost;
 
         TrackerUpdate();
     }
@@ -347,6 +351,7 @@ public class PlayerManager : MonoBehaviour
     public void MoveTile(Tile tile, TileHolder targetHolder) {
         TileHolder currentHolder = tile.OccupiedHolder;
         m_PV.RPC("RPC_MoveTile", RpcTarget.All, currentHolder.X, currentHolder.Y, targetHolder.X, targetHolder.Y);
+        UIManager.m_singleton.UpdateTiles(m_tilesInPlay);
     }
 
     public void SwapTiles(Tile tile, TileHolder targetHolder) {
@@ -778,6 +783,7 @@ public class PlayerManager : MonoBehaviour
         else {
             targetHolder = m_board.GetMyHand.GetTileHolders[targetX];
             m_tilesInHand++;
+            m_tilesInPlay--;
         }
 
         targetHolder.Tile = chosenTile;
