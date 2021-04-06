@@ -43,6 +43,8 @@ public class BattleManager : MonoBehaviour
         m_myPlayer = me;
         m_enemyPlayer = enemy;
 
+        UIManager.m_singleton.Versus(enemy.GetPhotonView.Owner.NickName);
+
         Debug.LogError($"I, Player {me.GetPhotonView.Owner.NickName}, am against Player {enemy.GetPhotonView.Owner.NickName}");
 
         m_timerFinished = false;
@@ -59,16 +61,19 @@ public class BattleManager : MonoBehaviour
 
     }
 
-    private void Fight(Unit myUnit, Unit enemyUnit) {
+    private bool Fight(Unit myUnit, Unit enemyUnit) {
+        bool myUnitDied = false;
         int myDamage = myUnit.GetDamage;
         int enemyDamage = enemyUnit.GetDamage;
         Debug.LogError($"myUnit: {myUnit.GetCurrentHealth}/{myDamage} enemyUnit: {enemyUnit.GetCurrentHealth}/{enemyDamage}");
         if (myUnit.TakeDamage(enemyDamage)) {
             m_myUnits.Remove(myUnit);
+            myUnitDied = true;
         }
         if (enemyUnit.TakeDamage(myDamage)) {
             m_enemyUnits.Remove(enemyUnit);
         }
+        return myUnitDied;
         //Might mess around with the index that needs to be changed/added
     }
 
@@ -82,6 +87,7 @@ public class BattleManager : MonoBehaviour
             unit.ResetHP();
         }
         ClearEnemyVisual();
+        UIManager.m_singleton.ClearVersus();
     }
 
     //Might be merged into another method later
@@ -173,15 +179,20 @@ public class BattleManager : MonoBehaviour
 
     IEnumerator MyCombat() {
         //Attack
+        //IF A UNIT DIES, THE INDEX MIGHT BE BROKEN
         Debug.Log("MyCombat called");
-        Unit myUnit = m_myUnits[m_myIndex];
-        Unit enemyUnit = m_enemyUnits[0];
-        Fight(myUnit, enemyUnit);
-        yield return new WaitForSeconds(1f);
-        m_myIndex++;
         if (m_myIndex >= m_myUnits.Count) {
             m_myIndex = 0;
         }
+
+        Unit myUnit = m_myUnits[m_myIndex];
+        Unit enemyUnit = m_enemyUnits[0];
+
+        if (!Fight(myUnit, enemyUnit)) {
+            m_myIndex++;
+        }
+
+        yield return new WaitForSeconds(1f);
 
         if (m_timerFinished) {
             m_myPlayer.TakeDamage(10);
@@ -219,14 +230,19 @@ public class BattleManager : MonoBehaviour
     IEnumerator EnemyCombat() {
         //Attack
         Debug.Log("EnemyCombat called");
-        Unit myUnit = m_myUnits[0];
-        Unit enemyUnit = m_enemyUnits[m_enemyIndex];
-        Fight(myUnit, enemyUnit);
-        yield return new WaitForSeconds(1f);
-        m_enemyIndex++;
+
         if (m_enemyIndex >= m_enemyUnits.Count) {
             m_enemyIndex = 0;
         }
+
+        Unit myUnit = m_myUnits[0];
+        Unit enemyUnit = m_enemyUnits[m_enemyIndex];
+
+        if (!Fight(myUnit, enemyUnit)) {
+            m_enemyIndex++;
+        }
+
+        yield return new WaitForSeconds(1f);
 
         if (m_timerFinished) {
             m_myPlayer.TakeDamage(10);

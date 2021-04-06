@@ -92,7 +92,7 @@ public class PlayerManager : MonoBehaviour
 
         if (m_PV.IsMine) {
             m_localPlayer = this;
-            UIManager.m_singleton.UpdateTiles(m_tilesInPlay);
+            UIManager.m_singleton.UpdateTiles();
         }
     }
 
@@ -219,7 +219,7 @@ public class PlayerManager : MonoBehaviour
         TileShop.m_singleton.AddToPool(tile.GetData.m_cost, tile.GetData.m_ID);
         tile.RemoveTileUnits();
         m_PV.RPC("RPC_SellTile", RpcTarget.All, tile.OccupiedHolder.X, tile.OccupiedHolder.Y);
-        UIManager.m_singleton.UpdateTiles(m_tilesInPlay);
+        UIManager.m_singleton.UpdateTiles();
         UpdateMoney();
     }
 
@@ -274,8 +274,10 @@ public class PlayerManager : MonoBehaviour
 
     #region UI
     private void UpdateMoney() {
+        if (m_PV.IsMine) {
+            m_moneyText.text = m_money.ToString();
+        }
         TileShop.m_singleton.CanButton();
-        m_moneyText.text = m_money.ToString();
     }
     #endregion
 
@@ -308,6 +310,7 @@ public class PlayerManager : MonoBehaviour
             m_currentEXP -= threshold;
         }
         UIManager.m_singleton.UpdatePlayerLevel();
+        UIManager.m_singleton.UpdateTiles();
     }
     #endregion
 
@@ -353,7 +356,7 @@ public class PlayerManager : MonoBehaviour
     public void MoveTile(Tile tile, TileHolder targetHolder) {
         TileHolder currentHolder = tile.OccupiedHolder;
         m_PV.RPC("RPC_MoveTile", RpcTarget.All, currentHolder.X, currentHolder.Y, targetHolder.X, targetHolder.Y);
-        UIManager.m_singleton.UpdateTiles(m_tilesInPlay);
+        UIManager.m_singleton.UpdateTiles();
     }
 
     public void SwapTiles(Tile tile, TileHolder targetHolder) {

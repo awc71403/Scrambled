@@ -52,9 +52,9 @@ public class GameManager : MonoBehaviourPunCallbacks {
     private int m_readyToProceed;
 
     // 30 but testing 10
-    public const float BufferTime = 4;
-    public const float BuyTime = 30;
-    public const float FightTime = 30;
+    public const float BufferTime = 5;
+    public const float BuyTime = 60;
+    public const float FightTime = 60;
     public const int StartRepetition = 4;
     public const int ExpPerRound = 2;
     #endregion
@@ -106,7 +106,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
             SwapPhase();
         }
         else {
-            //PlayerReadyToProceed();
+            PlayerReadyToProceed();
         }
     }
     #endregion

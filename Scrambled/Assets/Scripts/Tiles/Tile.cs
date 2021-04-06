@@ -23,6 +23,7 @@ public class Tile : MonoBehaviour
     [SerializeField]
     private bool m_isFirstHorizontal;
 
+    [SerializeField]
     private Unit m_verticalUnit;
     private int m_verticalDamage;
     private int m_verticalHealth;
@@ -125,13 +126,20 @@ public class Tile : MonoBehaviour
 
     #region Mouse
     private void OnMouseOver() {
+        UIManager.m_singleton.UpdateTile(this);
+
         if (Input.GetKeyDown(KeyCode.E)) {
             if (m_player.GetPhotonView.IsMine) {
                 Debug.Log("Sell called");
                 UIManager.m_singleton.CloseUnitUI();
+                UIManager.m_singleton.CloseTileUI();
                 m_player.OnSoldTile(this);
             }
         }
+    }
+
+    private void OnMouseExit() {
+        UIManager.m_singleton.CloseTileUI();
     }
     #endregion
 

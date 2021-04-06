@@ -14,14 +14,26 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Image m_unitImage;
     [SerializeField]
-    private TextMeshProUGUI m_hpText;
+    private TextMeshProUGUI m_unitHpText;
     [SerializeField]
-    private TextMeshProUGUI m_dmgText;
+    private TextMeshProUGUI m_unitDmgText;
+
+    [SerializeField]
+    private Image m_tileUI;
+    [SerializeField]
+    private Image m_tileImage;
+    [SerializeField]
+    private TextMeshProUGUI m_tileHpText;
+    [SerializeField]
+    private TextMeshProUGUI m_tileDmgText;
 
     [SerializeField]
     private TextMeshProUGUI m_expText;
     [SerializeField]
     private Slider m_expBar;
+
+    [SerializeField]
+    private TextMeshProUGUI m_versusText;
 
     [SerializeField]
     private TextMeshProUGUI m_unitsText;
@@ -50,14 +62,23 @@ public class UIManager : MonoBehaviour
         m_expText.text = $"LV {player.GetLevel}: {currentExp}/{expThreshold}";
         m_expBar.value = (float)currentExp / (float)expThreshold;
     }
+
+    public void Versus(string name) {
+        m_versusText.gameObject.SetActive(true);
+        m_versusText.text = $"Versus: {name}";
+    }
+
+    public void ClearVersus() {
+        m_versusText.gameObject.SetActive(false);
+    }
     #endregion
 
     #region Unit
     public void UpdateUnit(Unit unit) {
         m_unitUI.gameObject.SetActive(true);
         m_unitImage.sprite = unit.GetComponent<SpriteRenderer>().sprite;
-        m_hpText.text = $"{unit.GetCurrentHealth}/{unit.GetMaxHealth}";
-        m_dmgText.text = unit.GetDamage.ToString();
+        m_unitHpText.text = $"{unit.GetCurrentHealth}/{unit.GetMaxHealth}";
+        m_unitDmgText.text = unit.GetDamage.ToString();
     }
 
     public void CloseUnitUI() {
@@ -66,8 +87,19 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region Tiles
-    public void UpdateTiles(int tilesInPlay) {
-        m_unitsText.text = $"Tiles: {tilesInPlay}/{PlayerManager.m_localPlayer.GetLevel * PlayerManager.TilesPerLevel}";
+    public void UpdateTile(Tile tile) {
+        m_tileUI.gameObject.SetActive(true);
+        m_tileImage.sprite = tile.GetComponent<SpriteRenderer>().sprite;
+        m_tileHpText.text = tile.GetHealth.ToString();
+        m_tileDmgText.text = tile.GetDamage.ToString();
+    }
+
+    public void CloseTileUI() {
+        m_tileUI.gameObject.SetActive(false);
+    }
+
+    public void UpdateTiles() {
+        m_unitsText.text = $"Tiles: {PlayerManager.m_localPlayer.GetTilesInPlay}/{PlayerManager.m_localPlayer.GetLevel * PlayerManager.TilesPerLevel}";
     }
     #endregion
 }
