@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour
     #region Variables
     public static UIManager m_singleton;
 
+    [Header("Unit UI")]
     [SerializeField]
     private Image m_unitUI;
     [SerializeField]
@@ -18,6 +19,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI m_unitDmgText;
 
+    [Header("Tile UI")]
     [SerializeField]
     private Image m_tileUI;
     [SerializeField]
@@ -27,16 +29,27 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI m_tileDmgText;
 
+    [Header("Battle UI")]
+    [SerializeField]
+    private BattleUI m_battleUI;
+
+    [Header("Exp UI")]
     [SerializeField]
     private TextMeshProUGUI m_expText;
     [SerializeField]
     private Slider m_expBar;
 
+    [Header("Versus UI")]
     [SerializeField]
     private TextMeshProUGUI m_versusText;
 
+    [Header("Ready UI")]
     [SerializeField]
-    private TextMeshProUGUI m_unitsText;
+    private TextMeshProUGUI m_readyText;
+
+    [Header("Tiles UI")]
+    [SerializeField]
+    private TextMeshProUGUI m_tilesText;
 
     #endregion
 
@@ -46,12 +59,17 @@ public class UIManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        DontDestroyOnLoad(gameObject);
         m_singleton = this;
     }
     #endregion
 
     #region Update
+    #endregion
+
+    #region Getter
+    public BattleUI GetBattleUI {
+        get { return m_battleUI; }
+    }
     #endregion
 
     #region Player
@@ -99,7 +117,13 @@ public class UIManager : MonoBehaviour
     }
 
     public void UpdateTiles() {
-        m_unitsText.text = $"Tiles: {PlayerManager.m_localPlayer.GetTilesInPlay}/{PlayerManager.m_localPlayer.GetLevel * PlayerManager.TilesPerLevel}";
+        m_tilesText.text = $"Tiles: {PlayerManager.m_localPlayer.GetTilesInPlay}/{PlayerManager.m_localPlayer.GetLevel * PlayerManager.TilesPerLevel}";
+    }
+    #endregion
+
+    #region Ready
+    public void UpdateReady() {
+        m_readyText.text = $"Ready: {GameManager.m_singleton.GetPlayersReady}/{GameManager.m_singleton.GetPlayerList.Count}";
     }
     #endregion
 }

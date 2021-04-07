@@ -17,8 +17,6 @@ public class Unit: MonoBehaviour
     private int m_currHealth;
 
     private SpriteRenderer m_spriteRenderer;
-    private Shader m_shaderNormal;
-    private Shader m_shaderDamaged;
 
     private bool m_token;
 
@@ -31,8 +29,6 @@ public class Unit: MonoBehaviour
     #region Initialization
     private void Awake() {
         m_spriteRenderer = GetComponent<SpriteRenderer>();
-        m_shaderNormal = Shader.Find("Sprites/Default");
-        m_shaderDamaged = Shader.Find("GUI/Text Shader");
     }
 
     public void Setup(Tile[] tiles, bool isHorizontal) {
@@ -139,11 +135,11 @@ public class Unit: MonoBehaviour
     public bool TakeDamage(int damage) {
         m_currHealth -= damage;
         if (m_currHealth > 0) {
-            StartCoroutine(HurtAnimation());
+            AnimationManager.m_singleton.Hurt(m_spriteRenderer);
             return false;
         }
         else {
-            StartCoroutine(DeathAnimation());
+            AnimationManager.m_singleton.Death(m_spriteRenderer);
             return true;
         }
     }
@@ -159,52 +155,6 @@ public class Unit: MonoBehaviour
     }
     private void OnMouseExit() {
         UIManager.m_singleton.CloseUnitUI();
-    }
-    #endregion
-
-    #region Coroutine
-    void DamagedSprite() {
-        m_spriteRenderer.material.shader = m_shaderDamaged;
-        m_spriteRenderer.color = Color.white;
-    }
-
-    void NormalSprite() {
-        m_spriteRenderer.material.shader = m_shaderNormal;
-        m_spriteRenderer.color = Color.white;
-    }
-
-    IEnumerator HurtAnimation() {
-        // Go white
-        DamagedSprite();
-
-        // Shaking
-        Vector3 defaultPosition = transform.position;
-        System.Random r = new System.Random();
-        for (int i = 0; i < 5; i++) {
-            double horizontalOffset = r.NextDouble() * 0.2 - 0.1f;
-            Vector3 vectorOffset = new Vector3((float)horizontalOffset, 0, 0);
-            transform.position += vectorOffset;
-            yield return new WaitForSeconds(0.025f);
-            transform.position = defaultPosition;
-        }
-
-        // Go normal
-        NormalSprite();
-    }
-
-    IEnumerator DeathAnimation() {
-        Debug.Log("Death");
-        // loop over 0.5 second backwards
-        for (float i = 0.25f; i >= 0; i -= Time.deltaTime) {
-            // set color with i as alpha
-            m_spriteRenderer.color = new Color(1, 1, 1, i);
-            transform.localScale = new Vector3(1.5f - i, 1.5f - i, 1);
-            yield return null;
-        }
-
-        m_spriteRenderer.color = new Color(1, 1, 1, 1);
-        transform.localScale = new Vector3(1, 1, 1);
-        gameObject.SetActive(false);
     }
     #endregion
 }

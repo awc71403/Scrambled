@@ -22,6 +22,8 @@ public class BattleManager : MonoBehaviour
 
     private List<Tile> m_enemyTileVisual;
 
+    private BattleUI m_battleUI;
+
     public static BattleManager m_singleton;
     #endregion
 
@@ -32,6 +34,10 @@ public class BattleManager : MonoBehaviour
             return;
         }
         m_singleton = this;
+    }
+
+    private void Start() {
+        m_battleUI = UIManager.m_singleton.GetBattleUI;
     }
     #endregion
 
@@ -55,13 +61,14 @@ public class BattleManager : MonoBehaviour
         m_myUnits = me.OrderUnits();
         //Don't need?
         //m_enemyUnits = enemy.OrderUnits();
-
         StartCoroutine(SetUpVisual());
 
 
     }
 
     private bool Fight(Unit myUnit, Unit enemyUnit) {
+        m_battleUI.SetUI(myUnit, enemyUnit);
+
         bool myUnitDied = false;
         int myDamage = myUnit.GetDamage;
         int enemyDamage = enemyUnit.GetDamage;
@@ -192,7 +199,7 @@ public class BattleManager : MonoBehaviour
             m_myIndex++;
         }
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(3f);
 
         if (m_timerFinished) {
             m_myPlayer.TakeDamage(10);
@@ -242,7 +249,7 @@ public class BattleManager : MonoBehaviour
             m_enemyIndex++;
         }
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(3f);
 
         if (m_timerFinished) {
             m_myPlayer.TakeDamage(10);

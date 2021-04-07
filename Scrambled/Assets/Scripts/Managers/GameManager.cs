@@ -131,6 +131,10 @@ public class GameManager : MonoBehaviourPunCallbacks {
     public bool GetIsBuffer {
         get { return m_isBuffer; }
     }
+
+    public int GetPlayersReady {
+        get { return m_readyToProceed; }
+    }
     #endregion
 
     #region Players
@@ -140,6 +144,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
 
         if (PhotonNetwork.CurrentRoom.PlayerCount == m_playerList.Count) {
             SortPlayers();
+            UIManager.m_singleton.UpdateReady();
         }
     }
 
@@ -533,10 +538,13 @@ public class GameManager : MonoBehaviourPunCallbacks {
         }
     }
 
+
+    //ONLY CALLED ON MASTER
     public void PlayerReadyToProceed() {
         m_PV.RPC("RPC_PlayerReadyToProceed", RpcTarget.MasterClient);
     }
 
+    //CALLED FOR EVERYONE
     private void BufferNextPhase() {
         m_PV.RPC("RPC_BufferNextPhase", RpcTarget.All);
     }
@@ -545,7 +553,11 @@ public class GameManager : MonoBehaviourPunCallbacks {
     #region RPC
     [PunRPC]
     void RPC_PlayerReadyToProceed() {
+        if (m_isBuffer) {
+            return;
+        }
         m_readyToProceed++;
+        UIManager.m_singleton.UpdateReady();
         if (m_readyToProceed == m_aliveList.Count) {
             m_readyToProceed = 0;
             BufferNextPhase();
