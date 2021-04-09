@@ -106,6 +106,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
             SwapPhase();
         }
         else {
+            Debug.LogError("Update: PlayerReadyToProceed");
             PlayerReadyToProceed();
         }
     }
@@ -522,6 +523,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
     private void SwapPhase() {
         if (m_currentPhase == Phase.BUY) {
             m_currentPhase = Phase.FIGHT;
+            m_currentTimer = FightTime;
             //For Testing
             Matchmake();
             //DOESNT ACCOUNT GHOST
@@ -542,6 +544,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
     //ONLY CALLED ON MASTER
     public void PlayerReadyToProceed() {
         m_PV.RPC("RPC_PlayerReadyToProceed", RpcTarget.MasterClient);
+        Debug.LogError($"Called by {PlayerManager.m_localPlayer.GetPhotonView.Owner.NickName}");
     }
 
     //CALLED FOR EVERYONE
@@ -566,6 +569,7 @@ public class GameManager : MonoBehaviourPunCallbacks {
 
     [PunRPC]
     void RPC_BufferNextPhase() {
+        UIManager.m_singleton.GetBattleUI.Reset();
         m_isBuffer = true;
         m_currentTimer = BufferTime;
     }

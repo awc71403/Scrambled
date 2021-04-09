@@ -75,6 +75,7 @@ public class BattleUI : MonoBehaviour
     }
 
     public void Reset() {
+        Debug.LogError("Reset Called");
         m_myUnit = null;
         m_enemyUnit = null;
         gameObject.SetActive(false);

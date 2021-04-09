@@ -204,6 +204,7 @@ public class BattleManager : MonoBehaviour
         if (m_timerFinished) {
             m_myPlayer.TakeDamage(10);
             m_enemyPlayer.TakeDamage(10);
+            Debug.LogError("MyCombat: TimerFinished PlayerReadyToProceed");
             GameManager.m_singleton.PlayerReadyToProceed();
             ResetVisual();
             Debug.LogError("Exit: Timer finished");
@@ -214,11 +215,13 @@ public class BattleManager : MonoBehaviour
             if (m_enemyUnits.Count == 0) {
                 //Both Players don't take damage
                 Debug.LogError("Exit: Tie");
+                Debug.LogError("MyCombat: Tie PlayerReadyToProceed");
                 GameManager.m_singleton.PlayerReadyToProceed();
                 ResetVisual();
             }
             else {
                 Debug.LogError("Exit: I lost");
+                Debug.LogError("MyCombat: My Loss PlayerReadyToProceed");
                 m_myPlayer.TakeDamage(10);
                 GameManager.m_singleton.PlayerReadyToProceed();
                 ResetVisual();
@@ -226,6 +229,7 @@ public class BattleManager : MonoBehaviour
         }
         else if (m_enemyUnits.Count == 0) {
             Debug.LogError("Exit: I won");
+            Debug.LogError("MyCombat: My Win PlayerReadyToProceed");
             GameManager.m_singleton.PlayerReadyToProceed();
             ResetVisual();
         }
@@ -254,6 +258,7 @@ public class BattleManager : MonoBehaviour
         if (m_timerFinished) {
             m_myPlayer.TakeDamage(10);
             m_enemyPlayer.TakeDamage(10);
+            Debug.LogError("MyCombat: TimerFinished PlayerReadyToProceed");
             GameManager.m_singleton.PlayerReadyToProceed();
             ResetVisual();
             Debug.LogError("Exit: Timer finished");
@@ -264,11 +269,13 @@ public class BattleManager : MonoBehaviour
             if (m_enemyUnits.Count == 0) {
                 //Both Players don't take damage
                 Debug.LogError("Exit: Tie");
+                Debug.LogError("EnemyCombat: Tie PlayerReadyToProceed");
                 GameManager.m_singleton.PlayerReadyToProceed();
                 ResetVisual();
             }
             else {
                 Debug.LogError("Exit: I lost");
+                Debug.LogError("EnemyCombat: Loss PlayerReadyToProceed");
                 m_myPlayer.TakeDamage(10);
                 GameManager.m_singleton.PlayerReadyToProceed();
                 ResetVisual();
@@ -276,6 +283,7 @@ public class BattleManager : MonoBehaviour
         }
         else if (m_enemyUnits.Count == 0) {
             Debug.LogError("Exit: I won");
+            Debug.LogError("EnemyCombat: Won PlayerReadyToProceed");
             GameManager.m_singleton.PlayerReadyToProceed();
             ResetVisual();
         }
