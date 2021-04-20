@@ -6,9 +6,33 @@ using System.IO;
 using TMPro;
 using UnityEngine.UI;
 using Photon.Realtime;
+using System;
 
 public class PlayerManager : MonoBehaviour
 {
+    #region Struct
+    [System.Serializable]
+    public struct PlayerTrait {
+        #region Variables
+        public TraitType m_traitType;
+
+        public int m_currentThreshold;
+        public Dictionary<string, int> m_contributorDictionary;
+        public List<Unit> m_contributors;
+
+        public const int NOTHRESHOLD = -1;
+        #endregion
+
+        #region Initialization
+        public void Initialize() {
+            m_currentThreshold = 0;
+            m_contributorDictionary = new Dictionary<string, int>();
+            m_contributors = new List<Unit>();
+        }
+        #endregion
+    }
+    #endregion
+
     #region Variables
     private static int m_repitition;
 
@@ -38,6 +62,9 @@ public class PlayerManager : MonoBehaviour
     [SerializeField]
     private List<int> m_opponentTracker;
 
+    private Dictionary<TraitType, PlayerTrait> m_playerTraits;
+
+    //??? What is this for
     private int m_tileIDCreator;
 
     private TextMeshProUGUI m_moneyText;
@@ -89,6 +116,9 @@ public class PlayerManager : MonoBehaviour
 
         m_myUnits = new List<Unit>();
         m_opponentTracker = new List<int>();
+
+        m_playerTraits = new Dictionary<TraitType, PlayerTrait>();
+        InitializeTraits();
 
         if (m_PV.IsMine) {
             m_localPlayer = this;
@@ -200,6 +230,10 @@ public class PlayerManager : MonoBehaviour
     public List<Unit> MyUnits {
         get { return m_myUnits; }
         set { m_myUnits = value; }
+    }
+
+    public Dictionary<TraitType, PlayerTrait> GetPlayerTraits {
+        get { return m_playerTraits; }
     }
 
     public List<int> GetOpponentTracker {
@@ -709,6 +743,47 @@ public class PlayerManager : MonoBehaviour
         //}
 
         return orderedUnits;
+    }
+    #endregion
+
+    #region Trait
+    private void InitializeTraits() {
+        foreach (TraitType traitType in (TraitType[])Enum.GetValues(typeof(TraitType)))
+        {
+            PlayerTrait playerTrait = new PlayerTrait();
+            playerTrait.m_traitType = traitType;
+            playerTrait.Initialize();
+            m_playerTraits[traitType] = playerTrait;
+        }
+    }
+
+    public void AddUnitTraits(Unit unit) {
+        foreach (Trait trait in unit.GetTraits) {
+            PlayerTrait playerTrait = m_playerTraits[trait.m_traitType];
+            playerTrait.m_contributors.Add(unit);
+
+            if (!playerTrait.m_contributorDictionary.ContainsKey(unit.name)) {
+                playerTrait.m_contributorDictionary[unit.name] = 0;
+            }
+            if (playerTrait.m_contributorDictionary[unit.name] == 0) {
+                playerTrait.m_currentThreshold++;
+            }
+            playerTrait.m_contributorDictionary[unit.name]++;
+        }
+    }
+
+    public void RemoveUnitTriats(Unit unit) {
+        foreach (Trait trait in unit.GetTraits)
+        {
+            PlayerTrait playerTrait = m_playerTraits[trait.m_traitType];
+            playerTrait.m_contributors.Remove(unit);
+
+            playerTrait.m_contributorDictionary[unit.name]--;
+            if (playerTrait.m_contributorDictionary[unit.name] == 0)
+            {
+                playerTrait.m_currentThreshold--;
+            }
+        }
     }
     #endregion
 

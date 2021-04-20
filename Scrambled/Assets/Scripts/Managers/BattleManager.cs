@@ -55,6 +55,9 @@ public class BattleManager : MonoBehaviour
 
         m_timerFinished = false;
 
+        if (m_enemyTileVisual != null) {
+            ClearEnemyVisual();
+        }
         m_enemyTileVisual = new List<Tile>();
 
         //Move OrderUnits from PlayerManager to BattleManager

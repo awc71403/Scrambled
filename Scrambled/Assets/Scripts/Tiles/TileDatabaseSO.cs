@@ -14,8 +14,6 @@ public class TileDatabaseSO : ScriptableObject {
         public Trait m_trait2;
         public Trait m_trait3;
 
-        public enum Trait { LINK, WORM, VIRUS, ENCRYPTER, FIREWALL, BLACKLIST, TROJAN, RELAY, MACRO, BOTNET, COUNTER, OPS, CIPHER, ZERO, NONE }
-
         public int m_cost;
 
         public int m_health;
