@@ -296,6 +296,18 @@ public class BattleManager : MonoBehaviour
     }
     #endregion
 
+    #region Minion
+    public void AddMinion(int health, int damage, bool me) {
+        if (me)
+        {
+
+        }
+        else {
+
+        }
+    }
+    #endregion
+
     #region Helper
     private (int, int) Mirror(int x, int y) {
         int returnX = x;

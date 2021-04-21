@@ -6,6 +6,9 @@ public class TraitManager : MonoBehaviour
 {
     #region Variables
     public static TraitManager m_singleton;
+
+    public const int HEALTHINDEX = 0;
+    public const int DAMANGEINDEX = 1;
     #endregion
 
     #region Initialization
@@ -19,20 +22,23 @@ public class TraitManager : MonoBehaviour
     #endregion
 
     #region Trait
-    public void CheckActivation(Unit unit, Unit target, Trait trait, Trait.ActivationType activation) {
+    public void CheckActivation(PlayerManager caller, Unit unit, Unit target, Trait trait, Trait.ActivationType activation) {
         if (trait.m_activationType == activation) {
-            //Activate
-            //trait.TriggerAbility()
+            trait.TriggerAbility(caller, unit, target, null);
         }
     }
 
-    public void BuffTrait(Trait trait, int[] oldBuff, int[] newBuff) {
-        PlayerManager player = PlayerManager.m_localPlayer;
-        if (trait.m_traitType == TraitType.LINK) {
-            
-        } else if (trait.m_traitType == TraitType.FIREWALL) {
+    public void BuffTrait(PlayerManager caller, Trait trait, int[] oldBuff, int[] newBuff) {
+        List<Unit> contributors = caller.GetPlayerTraits[trait.m_traitType].m_contributors;
 
+        foreach (Unit unit in contributors) {
+            unit.HealthBuff -= oldBuff[HEALTHINDEX];
+            unit.DamageBuff -= oldBuff[DAMANGEINDEX];
+
+            unit.HealthBuff += newBuff[HEALTHINDEX];
+            unit.DamageBuff += newBuff[DAMANGEINDEX];
         }
     }
+
     #endregion
 }

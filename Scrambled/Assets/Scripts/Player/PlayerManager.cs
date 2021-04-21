@@ -16,6 +16,7 @@ public class PlayerManager : MonoBehaviour
         #region Variables
         public TraitType m_traitType;
 
+        public int m_oldThreshold;
         public int m_currentThreshold;
         public Dictionary<string, int> m_contributorDictionary;
         public List<Unit> m_contributors;
@@ -25,6 +26,7 @@ public class PlayerManager : MonoBehaviour
 
         #region Initialization
         public void Initialize() {
+            m_oldThreshold = 0;
             m_currentThreshold = 0;
             m_contributorDictionary = new Dictionary<string, int>();
             m_contributors = new List<Unit>();
@@ -766,6 +768,7 @@ public class PlayerManager : MonoBehaviour
                 playerTrait.m_contributorDictionary[unit.name] = 0;
             }
             if (playerTrait.m_contributorDictionary[unit.name] == 0) {
+                playerTrait.m_oldThreshold = playerTrait.m_currentThreshold;
                 playerTrait.m_currentThreshold++;
             }
             playerTrait.m_contributorDictionary[unit.name]++;
@@ -781,6 +784,7 @@ public class PlayerManager : MonoBehaviour
             playerTrait.m_contributorDictionary[unit.name]--;
             if (playerTrait.m_contributorDictionary[unit.name] == 0)
             {
+                playerTrait.m_oldThreshold = playerTrait.m_currentThreshold;
                 playerTrait.m_currentThreshold--;
             }
         }

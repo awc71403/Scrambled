@@ -29,7 +29,7 @@ public abstract class Trait : ScriptableObject
     public int[] m_threshold2Properties;
     public int[] m_threshold3Properties;
 
-    public abstract void TriggerAbility(Unit unit, Unit target, Effect effect);
+    public abstract void TriggerAbility(PlayerManager caller, Unit unit, Unit target, Effect effect);
 
     public int[] FindThresholdProperties(int threshold) {
         if (threshold < m_traitThresholds.m_threshold1) {

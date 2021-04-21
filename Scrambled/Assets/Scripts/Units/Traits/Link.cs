@@ -8,8 +8,10 @@ public class Link : Trait {
     private const int HEALTHINDEX = 0;
     private const int DAMANGEINDEX = 1;
 
-    public override void TriggerAbility(Unit unit, Unit target, Effect effect)
+    public override void TriggerAbility(PlayerManager caller, Unit unit, Unit target, Effect effect)
     {
-        throw new System.NotImplementedException();
+        int[] oldProperties = FindThresholdProperties(caller.GetPlayerTraits[m_traitType].m_oldThreshold);
+        int[] currentProperties = FindThresholdProperties(caller.GetPlayerTraits[m_traitType].m_currentThreshold);
+        TraitManager.m_singleton.BuffTrait(caller, this, oldProperties, currentProperties);
     }
 }

@@ -5,8 +5,13 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Trait/Worm")]
 public class Worm : Trait {
 
-    public override void TriggerAbility(Unit unit, Unit target, Effect effect)
+    private const int LIFESTEALINDEX = 0;
+
+    public override void TriggerAbility(PlayerManager caller, Unit unit, Unit target, Effect effect)
     {
-        throw new System.NotImplementedException();
+        int[] currentProperties = FindThresholdProperties(caller.GetPlayerTraits[m_traitType].m_currentThreshold);
+
+        //Need whole number
+        unit.Heal((unit.GetDamage + unit.DamageBuff) * currentProperties[LIFESTEALINDEX]);
     }
 }

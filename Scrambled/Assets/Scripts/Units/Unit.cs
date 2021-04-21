@@ -16,6 +16,9 @@ public class Unit: MonoBehaviour
     private int m_maxHealth;
     private int m_currHealth;
 
+    private int m_shield;
+    private float m_reflect;
+
     private int m_healthBuffs;
     private int m_damageBuffs;
 
@@ -121,6 +124,17 @@ public class Unit: MonoBehaviour
         get { return m_currHealth; }
     }
 
+    public int HealthBuff {
+        get { return m_healthBuffs; }
+        set { m_healthBuffs = value; }
+    }
+
+    public int DamageBuff
+    {
+        get { return m_damageBuffs; }
+        set { m_damageBuffs = value; }
+    }
+
     public int GetDamage {
         get { return m_damage; }
     }
@@ -147,13 +161,26 @@ public class Unit: MonoBehaviour
         }
     }
 
+    public void Heal(int amount) {
+        m_currHealth = Mathf.Max(m_maxHealth + m_healthBuffs, m_currHealth + amount);
+    }
+
     public void ResetHP() {
-        m_currHealth = m_maxHealth;
+        m_currHealth = m_maxHealth + m_healthBuffs;
     }
     #endregion
 
     #region Trait
     public void CheckAbilityCond(Trait.ActivationType type) {
+    }
+
+    public void SetShield(int shield) {
+        m_shield = shield;
+    }
+
+    public void SetReflect(float reflect)
+    {
+        m_reflect = reflect;
     }
     #endregion
 
