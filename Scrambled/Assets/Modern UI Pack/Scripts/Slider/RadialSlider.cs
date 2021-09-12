@@ -3,6 +3,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.UI.Michsky.UI.ModernUIPack;
 
 namespace Michsky.UI.ModernUIPack
 {
@@ -23,6 +24,7 @@ namespace Michsky.UI.ModernUIPack
         public float maxValue = 100;
         [Range(0, 8)] public int decimals;
         public bool isPercent;
+        public bool isFraction;
 
         // Saving
         public bool rememberValue;
@@ -140,8 +142,13 @@ namespace Michsky.UI.ModernUIPack
                 float normalizedAngle = SliderAngle / 360.0f;
                 indicatorPivot.transform.localEulerAngles = new Vector3(180.0f, 0.0f, SliderAngle);
                 sliderImage.fillAmount = normalizedAngle;
+                sliderImage.gameObject.GetComponent<UIGradient>().Offset = 1 - normalizedAngle;
 
                 valueText.text = string.Format("{0}{1}", SliderValue, isPercent ? "%" : "");
+                if (isFraction)
+                {
+                    valueText.text = string.Format("{0}{1}{2}", SliderValue, "/", maxValue);
+                }
                 currentValue = SliderValue;
             }
         }

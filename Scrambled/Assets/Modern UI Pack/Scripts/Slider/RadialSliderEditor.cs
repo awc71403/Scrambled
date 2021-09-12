@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI.Michsky.UI.ModernUIPack;
 #if UNITY_EDITOR
 using UnityEditor;
 
@@ -91,6 +92,7 @@ namespace Michsky.UI.ModernUIPack
             var minValue = serializedObject.FindProperty("minValue");
             var maxValue = serializedObject.FindProperty("maxValue");
             var isPercent = serializedObject.FindProperty("isPercent");
+            var isFraction = serializedObject.FindProperty("isFraction");
             var decimals = serializedObject.FindProperty("decimals");
 
             // Draw content depending on tab index
@@ -113,7 +115,12 @@ namespace Michsky.UI.ModernUIPack
                         float normalizedAngle = rsTarget.SliderAngle / 360.0f;
                         rsTarget.indicatorPivot.transform.localEulerAngles = new Vector3(180.0f, 0.0f, rsTarget.SliderAngle);
                         rsTarget.sliderImage.fillAmount = normalizedAngle;
+                        rsTarget.sliderImage.gameObject.GetComponent<UIGradient>().Offset = 1 - normalizedAngle;
                         rsTarget.valueText.text = string.Format("{0}{1}", currentValue.floatValue, rsTarget.isPercent ? "%" : "");
+                        if (rsTarget.isFraction)
+                        {
+                            rsTarget.valueText.text = string.Format("{0}{1}{2}", currentValue.floatValue, "/", rsTarget.maxValue);
+                        }
                     }
 
                     GUILayout.Space(18);
@@ -207,6 +214,9 @@ namespace Michsky.UI.ModernUIPack
 
                     isPercent.boolValue = GUILayout.Toggle(isPercent.boolValue, new GUIContent("Is Percent"), customSkin.FindStyle("Toggle"));
                     isPercent.boolValue = GUILayout.Toggle(isPercent.boolValue, new GUIContent(""), customSkin.FindStyle("Toggle Helper"));
+
+                    isFraction.boolValue = GUILayout.Toggle(isFraction.boolValue, new GUIContent("Is Fraction"), customSkin.FindStyle("Toggle"));
+                    isFraction.boolValue = GUILayout.Toggle(isFraction.boolValue, new GUIContent(""), customSkin.FindStyle("Toggle Helper"));
 
                     GUILayout.EndHorizontal();
                     GUILayout.Space(4);
